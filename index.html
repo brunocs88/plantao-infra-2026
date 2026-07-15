@@ -447,7 +447,7 @@
   .suggestion-pill.chosen .cnt{ color: rgba(4,17,13,0.6); }
   .suggestion-pill .rec-tag{ color: var(--holiday); font-size:10px; }
 
-  .modal select, .modal input[type=text]{
+  .modal select, .modal input[type=text], .modal input[type=password]{
     width:100%;
     background: var(--panel-alt);
     border: 1px solid var(--border);
@@ -719,6 +719,10 @@
   <div class="modal" id="modalBox"></div>
 </div>
 
+<div class="modal-overlay" id="loginOverlay" style="z-index:200;">
+  <div class="modal" id="loginBox" style="max-width:340px;"></div>
+</div>
+
 <script>
 const DATA = [{"sabado": "2026-01-03", "domingo": "2026-01-04", "titular": "Vitor", "backup": null, "raw": "03 e 04: Vitor", "feriados": [], "tem_feriado": false}, {"sabado": "2026-01-10", "domingo": "2026-01-11", "titular": "Pedro", "backup": "Edvaldo", "raw": "10 e 11: Pedro (+ Edvaldo)", "feriados": [], "tem_feriado": false}, {"sabado": "2026-01-17", "domingo": "2026-01-18", "titular": "Bruno", "backup": null, "raw": "17 e 18: Bruno", "feriados": [], "tem_feriado": false}, {"sabado": "2026-01-24", "domingo": "2026-01-25", "titular": "Estanis", "backup": "Randal", "raw": "24 e 25: Estanis (+ Randal)", "feriados": [], "tem_feriado": false}, {"sabado": "2026-01-31", "domingo": "2026-02-01", "titular": "Vitor", "backup": null, "raw": "31 e 01: Vitor", "feriados": [], "tem_feriado": false}, {"sabado": "2026-02-07", "domingo": "2026-02-08", "titular": "Estanis", "backup": null, "raw": "07 e 08: Estanis", "feriados": [], "tem_feriado": false}, {"sabado": "2026-02-14", "domingo": "2026-02-15", "titular": "Bruno", "backup": "Edvaldo", "raw": "14 e 15: Bruno (+ Edvaldo)", "feriados": [{"data": "2026-02-16", "nome": "Carnaval (segunda)", "categoria": "facultativo"}], "tem_feriado": true}, {"sabado": "2026-02-21", "domingo": "2026-02-22", "titular": "Pedro", "backup": null, "raw": "21 e 22: Pedro", "feriados": [], "tem_feriado": false}, {"sabado": "2026-02-28", "domingo": "2026-03-01", "titular": "Vitor", "backup": "Randal", "raw": "28 e 01: Vitor (+ Randal)", "feriados": [], "tem_feriado": false}, {"sabado": "2026-03-07", "domingo": "2026-03-08", "titular": "Vitor", "backup": null, "raw": "07 e 08: Vitor", "feriados": [], "tem_feriado": false}, {"sabado": "2026-03-14", "domingo": "2026-03-15", "titular": "Bruno", "backup": "Edvaldo", "raw": "14 e 15: Bruno (+ Edvaldo)", "feriados": [], "tem_feriado": false}, {"sabado": "2026-03-21", "domingo": "2026-03-22", "titular": "Estanis", "backup": "Randal", "raw": "21 e 22: Estanis (+ Randal)", "feriados": [], "tem_feriado": false}, {"sabado": "2026-03-28", "domingo": "2026-03-29", "titular": "Vitor", "backup": null, "raw": "28 e 29: Vitor", "feriados": [], "tem_feriado": false}, {"sabado": "2026-04-04", "domingo": "2026-04-05", "titular": "Pedro", "backup": "Edvaldo", "raw": "04 e 05: Pedro (+ Edvaldo)", "feriados": [{"data": "2026-04-03", "nome": "Sexta-feira Santa", "categoria": "nacional"}], "tem_feriado": true}, {"sabado": "2026-04-11", "domingo": "2026-04-12", "titular": "Bruno", "backup": null, "raw": "11 e 12: Bruno", "feriados": [], "tem_feriado": false}, {"sabado": "2026-04-18", "domingo": "2026-04-19", "titular": "Estanis", "backup": "Randal", "raw": "18 e 19: Estanis (+ Randal)", "feriados": [], "tem_feriado": false}, {"sabado": "2026-04-25", "domingo": "2026-04-26", "titular": "Vitor", "backup": null, "raw": "25 e 26: Vitor", "feriados": [], "tem_feriado": false}, {"sabado": "2026-05-02", "domingo": "2026-05-03", "titular": "Pedro", "backup": null, "raw": "02 e 03: Pedro", "feriados": [{"data": "2026-05-01", "nome": "Dia do Trabalho", "categoria": "nacional"}], "tem_feriado": true}, {"sabado": "2026-05-09", "domingo": "2026-05-10", "titular": "Bruno", "backup": "Edvaldo", "raw": "09 e 10: Bruno (+ Edvaldo)", "feriados": [], "tem_feriado": false}, {"sabado": "2026-05-16", "domingo": "2026-05-17", "titular": "Vitor", "backup": "Randal", "raw": "16 e 17: Vitor (+ Randal)", "feriados": [], "tem_feriado": false}, {"sabado": "2026-05-23", "domingo": "2026-05-24", "titular": "Estanis", "backup": null, "raw": "23 e 24: Estanis", "feriados": [], "tem_feriado": false}, {"sabado": "2026-05-30", "domingo": "2026-05-31", "titular": "Pedro", "backup": null, "raw": "30 e 31: Pedro", "feriados": [], "tem_feriado": false}, {"sabado": "2026-06-06", "domingo": "2026-06-07", "titular": "Bruno", "backup": null, "raw": "06 e 07: Bruno", "feriados": [], "tem_feriado": false}, {"sabado": "2026-06-13", "domingo": "2026-06-14", "titular": "Estanis", "backup": "Edvaldo", "raw": "13 e 14: Estanis (+ Edvaldo)", "feriados": [], "tem_feriado": false}, {"sabado": "2026-06-20", "domingo": "2026-06-21", "titular": "Vitor", "backup": null, "raw": "20 e 21: Vitor", "feriados": [], "tem_feriado": false}, {"sabado": "2026-06-27", "domingo": "2026-06-28", "titular": "Pedro", "backup": "Randal", "raw": "27 e 28: Pedro (+ Randal)", "feriados": [], "tem_feriado": false}, {"sabado": "2026-07-04", "domingo": "2026-07-05", "titular": "Bruno", "backup": "Edvaldo", "raw": "04 e 05: Bruno (+ Edvaldo)", "feriados": [], "tem_feriado": false}, {"sabado": "2026-07-11", "domingo": "2026-07-12", "titular": "Estanis", "backup": null, "raw": "11 e 12: Estanis", "feriados": [], "tem_feriado": false}, {"sabado": "2026-07-18", "domingo": "2026-07-19", "titular": "Pedro", "backup": "Randal", "raw": "18 e 19: Pedro (+ Randal)", "feriados": [], "tem_feriado": false}, {"sabado": "2026-07-25", "domingo": "2026-07-26", "titular": "Vitor", "backup": null, "raw": "25 e 26: Vitor", "feriados": [{"data": "2026-07-27", "nome": "Aniversário de São José dos Campos", "categoria": "municipal-SJC"}], "tem_feriado": true}, {"sabado": "2026-08-01", "domingo": "2026-08-02", "titular": "Bruno", "backup": null, "raw": "01 e 02: Bruno", "feriados": [], "tem_feriado": false}, {"sabado": "2026-08-08", "domingo": "2026-08-09", "titular": "Estanis", "backup": "Edvaldo", "raw": "08 e 09: Estanis (+ Edvaldo)", "feriados": [], "tem_feriado": false}, {"sabado": "2026-08-15", "domingo": "2026-08-16", "titular": "Pedro", "backup": null, "raw": "15 e 16: Pedro", "feriados": [], "tem_feriado": false}, {"sabado": "2026-08-22", "domingo": "2026-08-23", "titular": "Vitor", "backup": "Randal", "raw": "22 e 23: Vitor (+ Randal)", "feriados": [], "tem_feriado": false}, {"sabado": "2026-08-29", "domingo": "2026-08-30", "titular": "Bruno", "backup": null, "raw": "29 e 30: Bruno", "feriados": [], "tem_feriado": false}, {"sabado": "2026-09-05", "domingo": "2026-09-06", "titular": "Estanis", "backup": null, "raw": "05 e 06: Estanis", "feriados": [{"data": "2026-09-07", "nome": "Independência do Brasil", "categoria": "nacional"}], "tem_feriado": true}, {"sabado": "2026-09-12", "domingo": "2026-09-13", "titular": "Vitor", "backup": "Edvaldo", "raw": "12 e 13: Vitor (+ Edvaldo)", "feriados": [], "tem_feriado": false}, {"sabado": "2026-09-19", "domingo": "2026-09-20", "titular": "Pedro", "backup": null, "raw": "19 e 20: Pedro", "feriados": [], "tem_feriado": false}, {"sabado": "2026-09-26", "domingo": "2026-09-27", "titular": "Bruno", "backup": "Randal", "raw": "26 e 27: Bruno (+ Randal)", "feriados": [], "tem_feriado": false}, {"sabado": "2026-10-03", "domingo": "2026-10-04", "titular": "Estanis", "backup": "Edvaldo", "raw": "03 e 04: Estanis (+ Edvaldo)", "feriados": [], "tem_feriado": false}, {"sabado": "2026-10-10", "domingo": "2026-10-11", "titular": "Vitor", "backup": null, "raw": "10 e 11: Vitor", "feriados": [{"data": "2026-10-12", "nome": "Nossa Senhora Aparecida", "categoria": "nacional"}], "tem_feriado": true}, {"sabado": "2026-10-17", "domingo": "2026-10-18", "titular": "Pedro", "backup": "Randal", "raw": "17 e 18: Pedro (+ Randal)", "feriados": [], "tem_feriado": false}, {"sabado": "2026-10-24", "domingo": "2026-10-25", "titular": "Bruno", "backup": null, "raw": "24 e 25: Bruno", "feriados": [], "tem_feriado": false}, {"sabado": "2026-10-31", "domingo": "2026-11-01", "titular": "Vitor", "backup": null, "raw": "31 e 01: Vitor", "feriados": [{"data": "2026-11-02", "nome": "Finados", "categoria": "nacional"}], "tem_feriado": true}, {"sabado": "2026-11-07", "domingo": "2026-11-08", "titular": "Estanis", "backup": "Edvaldo", "raw": "07 e 08: Estanis (+ Edvaldo)", "feriados": [], "tem_feriado": false}, {"sabado": "2026-11-14", "domingo": "2026-11-15", "titular": "Pedro", "backup": null, "raw": "14 e 15: Pedro", "feriados": [{"data": "2026-11-15", "nome": "Proclamação da República", "categoria": "nacional"}], "tem_feriado": true}, {"sabado": "2026-11-21", "domingo": "2026-11-22", "titular": "Bruno", "backup": "Randal", "raw": "21 e 22: Bruno (+ Randal)", "feriados": [{"data": "2026-11-20", "nome": "Consciência Negra", "categoria": "nacional/estadual-SP"}], "tem_feriado": true}, {"sabado": "2026-11-28", "domingo": "2026-11-29", "titular": "Vitor", "backup": null, "raw": "28 e 29: Vitor", "feriados": [], "tem_feriado": false}, {"sabado": "2026-12-05", "domingo": "2026-12-06", "titular": "Pedro", "backup": "Edvaldo", "raw": "05 e 06: Pedro (+ Edvaldo)", "feriados": [], "tem_feriado": false}, {"sabado": "2026-12-12", "domingo": "2026-12-13", "titular": "Bruno", "backup": null, "raw": "12 e 13: Bruno", "feriados": [], "tem_feriado": false}, {"sabado": "2026-12-19", "domingo": "2026-12-20", "titular": "Vitor", "backup": "Randal", "raw": "19 e 20: Vitor (+ Randal)", "feriados": [], "tem_feriado": false}, {"sabado": "2026-12-26", "domingo": "2026-12-27", "titular": "Estanis", "backup": null, "raw": "26 e 27: Estanis", "feriados": [{"data": "2026-12-25", "nome": "Natal", "categoria": "nacional"}], "tem_feriado": true}];
 const HOLIDAYS = {"2026-01-01": {"nome": "Confraternização Universal", "categoria": "nacional"}, "2026-02-16": {"nome": "Carnaval (segunda)", "categoria": "facultativo"}, "2026-02-17": {"nome": "Carnaval (terça)", "categoria": "facultativo"}, "2026-02-18": {"nome": "Quarta-feira de Cinzas (até 14h)", "categoria": "facultativo"}, "2026-04-03": {"nome": "Sexta-feira Santa", "categoria": "nacional"}, "2026-04-21": {"nome": "Tiradentes", "categoria": "nacional"}, "2026-05-01": {"nome": "Dia do Trabalho", "categoria": "nacional"}, "2026-06-04": {"nome": "Corpus Christi", "categoria": "facultativo"}, "2026-07-09": {"nome": "Revolução Constitucionalista", "categoria": "estadual-SP"}, "2026-09-07": {"nome": "Independência do Brasil", "categoria": "nacional"}, "2026-10-12": {"nome": "Nossa Senhora Aparecida", "categoria": "nacional"}, "2026-11-02": {"nome": "Finados", "categoria": "nacional"}, "2026-11-15": {"nome": "Proclamação da República", "categoria": "nacional"}, "2026-11-20": {"nome": "Consciência Negra", "categoria": "nacional/estadual-SP"}, "2026-12-08": {"nome": "Dia da Padroeira de Jacareí (N. Sra. Conceição)", "categoria": "municipal-Jacareí"}, "2026-12-25": {"nome": "Natal", "categoria": "nacional"}, "2026-03-19": {"nome": "Dia de São José (Padroeiro de SJC)", "categoria": "municipal-SJC"}, "2026-07-27": {"nome": "Aniversário de São José dos Campos", "categoria": "municipal-SJC"}};
@@ -747,6 +751,7 @@ const ALL_PEOPLE = (() => {
 const STORAGE_KEY = 'plantao-2026-overrides';
 let overrides = {};
 let storageAvailable = true;
+let adminUser = sessionStorage.getItem('plantao-admin-user') || '';
 let adminKey = sessionStorage.getItem('plantao-admin-key') || '';
 
 async function loadOverrides(){
@@ -760,33 +765,85 @@ async function loadOverrides(){
   }
 }
 
+// Mostra um modal de login (usuário + senha) e resolve com {user, pass} ou null se cancelado.
+function promptLogin(errorMsg){
+  return new Promise((resolve) => {
+    const overlay = document.getElementById('loginOverlay');
+    const box = document.getElementById('loginBox');
+    box.innerHTML = `
+      <h3>Login de administrador</h3>
+      <div class="modal-sub">Necessário só para salvar trocas na escala — visualizar não precisa.</div>
+      ${errorMsg ? `<div class="modal-error" style="color:var(--today); font-size:11px; margin-bottom:10px;">⚠ ${errorMsg}</div>` : ''}
+      <label class="field-label">Usuário</label>
+      <input type="text" id="loginUser" autocomplete="username">
+      <label class="field-label">Senha</label>
+      <input type="password" id="loginPass" autocomplete="current-password">
+      <div class="modal-actions">
+        <div></div>
+        <div style="display:flex; gap:8px;">
+          <button class="btn btn-ghost" id="loginCancel">cancelar</button>
+          <button class="btn btn-primary" id="loginSubmit">entrar</button>
+        </div>
+      </div>
+    `;
+    overlay.classList.add('show');
+    box.querySelector('#loginUser').focus();
+
+    const finish = (val) => { overlay.classList.remove('show'); resolve(val); };
+    box.querySelector('#loginCancel').addEventListener('click', () => finish(null));
+    const submit = () => {
+      const user = box.querySelector('#loginUser').value.trim();
+      const pass = box.querySelector('#loginPass').value;
+      finish({ user, pass });
+    };
+    box.querySelector('#loginSubmit').addEventListener('click', submit);
+    box.querySelector('#loginPass').addEventListener('keydown', (e) => { if(e.key === 'Enter') submit(); });
+  });
+}
+document.getElementById('loginOverlay').addEventListener('click', (e) => {
+  if(e.target.id === 'loginOverlay') e.currentTarget.classList.remove('show');
+});
+
 // Tenta salvar um novo conjunto de overrides no servidor.
-// Só aplica localmente (overrides = newOverrides) se o servidor aceitar.
+// Só aplica localmente (overrides = newOverrides) se o servidor aceitar as credenciais.
 async function apiSaveOverrides(newOverrides){
-  let key = adminKey;
-  if(!key){
-    key = window.prompt('Senha de administrador (só quem edita a escala precisa digitar):') || '';
-  }
-  try{
-    const r = await fetch('/api/overrides', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json', 'x-admin-key': key},
-      body: JSON.stringify(newOverrides)
-    });
-    if(r.status === 401){
-      adminKey = '';
-      sessionStorage.removeItem('plantao-admin-key');
-      return { ok:false, error:'Senha de administrador incorreta.' };
+  let user = adminUser, key = adminKey;
+  let errorMsg = null;
+
+  for(let attempt = 0; attempt < 3; attempt++){
+    if(!user || !key){
+      const creds = await promptLogin(errorMsg);
+      if(!creds) return { ok:false, error:'Login cancelado.' };
+      user = creds.user;
+      key = creds.pass;
+      errorMsg = null;
     }
-    if(!r.ok) throw new Error('bad response');
-    adminKey = key;
-    sessionStorage.setItem('plantao-admin-key', key);
-    overrides = newOverrides;
-    storageAvailable = true;
-    return { ok:true };
-  }catch(e){
-    return { ok:false, error:'Não deu para conectar ao servidor. A troca não foi salva.' };
+    try{
+      const r = await fetch('/api/overrides', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', 'x-admin-user': user, 'x-admin-key': key},
+        body: JSON.stringify(newOverrides)
+      });
+      if(r.status === 401){
+        user = ''; key = '';
+        adminUser = ''; adminKey = '';
+        sessionStorage.removeItem('plantao-admin-user');
+        sessionStorage.removeItem('plantao-admin-key');
+        errorMsg = 'Usuário ou senha incorretos.';
+        continue;
+      }
+      if(!r.ok) throw new Error('bad response');
+      adminUser = user; adminKey = key;
+      sessionStorage.setItem('plantao-admin-user', user);
+      sessionStorage.setItem('plantao-admin-key', key);
+      overrides = newOverrides;
+      storageAvailable = true;
+      return { ok:true };
+    }catch(e){
+      return { ok:false, error:'Não deu para conectar ao servidor. A troca não foi salva.' };
+    }
   }
+  return { ok:false, error:'Muitas tentativas incorretas. Tente novamente mais tarde.' };
 }
 
 function getEffectiveData(){

@@ -12,10 +12,13 @@ export default async (req: Request, context: Context) => {
   }
 
   if (req.method === "POST") {
+    const adminUser = req.headers.get("x-admin-user");
     const adminKey = req.headers.get("x-admin-key");
-    const expected = Netlify.env.get("ADMIN_KEY");
-    if (!expected || adminKey !== expected) {
-      return new Response(JSON.stringify({ ok: false, error: "senha de administrador incorreta" }), {
+    const expectedUser = Netlify.env.get("ADMIN_USER");
+    const expectedKey = Netlify.env.get("ADMIN_KEY");
+
+    if (!expectedUser || !expectedKey || adminUser !== expectedUser || adminKey !== expectedKey) {
+      return new Response(JSON.stringify({ ok: false, error: "usuário ou senha incorretos" }), {
         status: 401,
         headers: { "Content-Type": "application/json" }
       });
