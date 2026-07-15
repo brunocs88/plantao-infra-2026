@@ -750,18 +750,22 @@ let storageAvailable = true;
 
 async function loadOverrides(){
   try{
-    if(!window.storage) throw new Error('sem storage');
-    const r = await window.storage.get(STORAGE_KEY, false);
-    overrides = r ? JSON.parse(r.value) : {};
+    const r = await fetch('/api/overrides');
+    if(!r.ok) throw new Error('bad response');
+    overrides = await r.json();
   }catch(e){
     overrides = {};
-    storageAvailable = (typeof window.storage !== 'undefined');
+    storageAvailable = false;
   }
 }
 async function saveOverrides(){
   try{
-    if(!window.storage) throw new Error('sem storage');
-    await window.storage.set(STORAGE_KEY, JSON.stringify(overrides), false);
+    const r = await fetch('/api/overrides', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(overrides)
+    });
+    if(!r.ok) throw new Error('bad response');
   }catch(e){
     storageAvailable = false;
   }
@@ -806,7 +810,7 @@ function renderStatusBar(){
   }
   bar.innerHTML = `
     <div><span class="dot"></span>hoje: <b>${fmtDateFull(TODAY.toISOString().slice(0,10))}</b> &nbsp;·&nbsp; ${past} concluídos / ${future.length} restantes de ${data.length}</div>
-    <div>${nextTxt}</div>
+    <div>${nextTxt}${storageAvailable ? '' : ' <span style="color:var(--holiday)" title="trocas não estão sendo salvas de forma compartilhada">· trocas só nesta sessão</span>'}</div>
   `;
 }
 
