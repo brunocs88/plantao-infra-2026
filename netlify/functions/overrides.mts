@@ -12,6 +12,15 @@ export default async (req: Request, context: Context) => {
   }
 
   if (req.method === "POST") {
+    const adminKey = req.headers.get("x-admin-key");
+    const expected = Netlify.env.get("ADMIN_KEY");
+    if (!expected || adminKey !== expected) {
+      return new Response(JSON.stringify({ ok: false, error: "senha de administrador incorreta" }), {
+        status: 401,
+        headers: { "Content-Type": "application/json" }
+      });
+    }
+
     const body = await req.json();
     await store.setJSON("overrides", body);
     return new Response(JSON.stringify({ ok: true }), {

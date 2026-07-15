@@ -747,6 +747,7 @@ const ALL_PEOPLE = (() => {
 const STORAGE_KEY = 'plantao-2026-overrides';
 let overrides = {};
 let storageAvailable = true;
+let adminKey = sessionStorage.getItem('plantao-admin-key') || '';
 
 async function loadOverrides(){
   try{
@@ -758,16 +759,33 @@ async function loadOverrides(){
     storageAvailable = false;
   }
 }
-async function saveOverrides(){
+
+// Tenta salvar um novo conjunto de overrides no servidor.
+// Só aplica localmente (overrides = newOverrides) se o servidor aceitar.
+async function apiSaveOverrides(newOverrides){
+  let key = adminKey;
+  if(!key){
+    key = window.prompt('Senha de administrador (só quem edita a escala precisa digitar):') || '';
+  }
   try{
     const r = await fetch('/api/overrides', {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(overrides)
+      headers: {'Content-Type': 'application/json', 'x-admin-key': key},
+      body: JSON.stringify(newOverrides)
     });
+    if(r.status === 401){
+      adminKey = '';
+      sessionStorage.removeItem('plantao-admin-key');
+      return { ok:false, error:'Senha de administrador incorreta.' };
+    }
     if(!r.ok) throw new Error('bad response');
+    adminKey = key;
+    sessionStorage.setItem('plantao-admin-key', key);
+    overrides = newOverrides;
+    storageAvailable = true;
+    return { ok:true };
   }catch(e){
-    storageAvailable = false;
+    return { ok:false, error:'Não deu para conectar ao servidor. A troca não foi salva.' };
   }
 }
 
@@ -1240,7 +1258,8 @@ async function applySwap(){
   if(modalState.role === 'titular') newTitular = chosen;
   else newBackup = chosen;
 
-  overrides[modalState.key] = {
+  const candidate = { ...overrides };
+  candidate[modalState.key] = {
     titular: newTitular,
     backup: newBackup,
     motivo: motivo || (existing ? existing.motivo : ''),
@@ -1249,16 +1268,37 @@ async function applySwap(){
     ts: Date.now()
   };
 
-  await saveOverrides();
+  const result = await apiSaveOverrides(candidate);
+  if(!result.ok){
+    showModalError(result.error);
+    return;
+  }
   closeModal();
   renderAll();
 }
 
 async function restoreOriginal(){
-  delete overrides[modalState.key];
-  await saveOverrides();
+  const candidate = { ...overrides };
+  delete candidate[modalState.key];
+  const result = await apiSaveOverrides(candidate);
+  if(!result.ok){
+    showModalError(result.error);
+    return;
+  }
   closeModal();
   renderAll();
+}
+
+function showModalError(msg){
+  const box = document.getElementById('modalBox');
+  let el = box.querySelector('.modal-error');
+  if(!el){
+    el = document.createElement('div');
+    el.className = 'modal-error';
+    el.style.cssText = 'color:var(--today); font-size:11px; margin-top:10px;';
+    box.querySelector('.modal-actions').before(el);
+  }
+  el.textContent = '⚠ ' + msg;
 }
 
 document.getElementById('modalOverlay').addEventListener('click', (e) => {
@@ -1284,8 +1324,13 @@ function renderHistory(){
   }).join('');
   list.querySelectorAll('button[data-key]').forEach(btn => {
     btn.addEventListener('click', async () => {
-      delete overrides[btn.dataset.key];
-      await saveOverrides();
+      const candidate = { ...overrides };
+      delete candidate[btn.dataset.key];
+      const result = await apiSaveOverrides(candidate);
+      if(!result.ok){
+        alert('⚠ ' + result.error);
+        return;
+      }
       renderAll();
     });
   });
