@@ -832,7 +832,11 @@ async function apiSaveOverrides(newOverrides){
         errorMsg = 'Usuário ou senha incorretos.';
         continue;
       }
-      if(!r.ok) throw new Error('bad response');
+      if(!r.ok){
+        let detail = '';
+        try{ const j = await r.json(); detail = j.error || ''; }catch(_e){}
+        return { ok:false, error: detail ? `Erro do servidor: ${detail}` : `Não deu para conectar ao servidor (status ${r.status}). A troca não foi salva.` };
+      }
       adminUser = user; adminKey = key;
       sessionStorage.setItem('plantao-admin-user', user);
       sessionStorage.setItem('plantao-admin-key', key);
@@ -840,7 +844,7 @@ async function apiSaveOverrides(newOverrides){
       storageAvailable = true;
       return { ok:true };
     }catch(e){
-      return { ok:false, error:'Não deu para conectar ao servidor. A troca não foi salva.' };
+      return { ok:false, error:'Não deu para conectar ao servidor (falha de rede). A troca não foi salva.' };
     }
   }
   return { ok:false, error:'Muitas tentativas incorretas. Tente novamente mais tarde.' };
