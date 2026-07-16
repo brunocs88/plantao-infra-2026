@@ -85,6 +85,32 @@
   }
   .statusbar b{ color: var(--text); font-weight:600; }
 
+  .adminbar{
+    display:flex;
+    align-items:center;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-bottom: 18px;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+  .adminbar .badge-view{
+    display:flex; align-items:center; gap:6px;
+  }
+  .adminbar .badge-view .dotgray{
+    width:6px; height:6px; border-radius:50%;
+    background: var(--text-dim);
+  }
+  .adminbar .badge-admin{
+    display:flex; align-items:center; gap:6px;
+    color: var(--bruno);
+  }
+  .adminbar .badge-admin .dotgreen{
+    width:6px; height:6px; border-radius:50%;
+    background: var(--bruno);
+    box-shadow: 0 0 6px var(--bruno);
+  }
+
   header.hero{
     margin-bottom: 28px;
   }
@@ -659,11 +685,12 @@
 <div class="wrap">
 
   <div class="statusbar" id="statusbar"></div>
+  <div class="adminbar" id="adminbar"></div>
 
   <header class="hero">
     <div class="eyebrow">Escala Plantão Infra · Farma Conde</div>
     <h1>Plantão 2026</h1>
-    <p>Painel gerado a partir da planilha de escala. No calendário abaixo, sábado + domingo coloridos = plantão daquela pessoa. Anel dourado = dia de feriado, considerando a janela de sexta a segunda em torno do fim de semana. Clique no ícone de lápis num dia (ou na linha da tabela) para trocar o responsável — por exemplo quando alguém sai de férias.</p>
+    <p>Painel gerado a partir da planilha de escala. No calendário abaixo, sábado + domingo coloridos = plantão daquela pessoa. Anel dourado = dia de feriado, considerando a janela de sexta a segunda em torno do fim de semana. Para trocar alguém (ex: férias), clique em "entrar como admin" no canto superior direito.</p>
   </header>
 
   <section class="kpis" id="kpis"></section>
@@ -707,7 +734,7 @@
 
   <footer class="notes">
     <p><b>Como os feriados são contados:</b> para cada plantão (sábado + domingo), verificamos se algum feriado nacional, ponto facultativo, feriado estadual (SP) ou municipal (Jacareí) cai na sexta-feira anterior, no próprio sábado/domingo, ou na segunda-feira seguinte. Se você quiser uma janela diferente (por ex. a semana inteira), me avisa que eu recalculo.</p>
-    <p><b>Feriados considerados:</b> Confraternização Universal, Carnaval (seg+ter, facultativo), Quarta-feira de Cinzas (facultativo), Sexta-feira Santa, Tiradentes, Dia do Trabalho, Corpus Christi (facultativo), Revolução Constitucionalista (SP, 9/jul), Independência, N. Sra. Aparecida, Finados, Proclamação da República, Consciência Negra, Natal, Dia da Padroeira de Jacareí (8/dez), Dia de São José · Padroeiro de São José dos Campos (19/mar) e Aniversário de São José dos Campos (27/jul).</p>
+    <p><b>Feriados considerados:</b> Confraternização Universal, Carnaval (seg+ter, facultativo), Quarta-feira de Cinzas (facultativo), Sexta-feira Santa, Tiradentes, Dia do Trabalho, Corpus Christi (facultativo), Revolução Constitucionalista (SP, 9/jul), Independência, N. Sra. Aparecida, Finados, Proclamação da República, Consciência Negra, Natal, Dia de São José · Padroeiro de São José dos Campos (19/mar) e Aniversário de São José dos Campos (27/jul).</p>
     <p><b>Dados:</b> extraídos da aba "PLANTÃO 2026" da planilha enviada. Se a escala mudar, é só reenviar a planilha que eu atualizo o painel.</p>
   </footer>
 
@@ -1030,11 +1057,13 @@ function renderCalendarYear(){
           bd.className = 'backup-dot';
           cell.appendChild(bd);
         }
-        const editDot = document.createElement('div');
-        editDot.className = 'edit-dot';
-        editDot.textContent = '✎';
-        editDot.addEventListener('click', (ev) => { ev.stopPropagation(); openSwapModal(rec.sabado); });
-        cell.appendChild(editDot);
+        if(isAdmin()){
+          const editDot = document.createElement('div');
+          editDot.className = 'edit-dot';
+          editDot.textContent = '✎';
+          editDot.addEventListener('click', (ev) => { ev.stopPropagation(); openSwapModal(rec.sabado); });
+          cell.appendChild(editDot);
+        }
 
         cell.addEventListener('mouseenter', (e) => showTooltip(e, rec, iso, hol));
         cell.addEventListener('mousemove', moveTooltip);
@@ -1141,9 +1170,11 @@ function renderTable(){
       <td><span class="tag-person"><span class="sw" style="background:${color}"></span>${rec.titular}</span>${ovBadge}</td>
       <td>${rec.backup || '<span class="muted">—</span>'}</td>
       <td>${rec.tem_feriado ? `<span class="fer-pill">${rec.feriados.map(fmtHolName).join(', ')}</span>` : '<span class="muted">—</span>'}</td>
-      <td><button class="btn btn-ghost" style="padding:4px 8px;" data-key="${rec.sabado}">editar</button></td>
+      <td>${isAdmin() ? `<button class="btn btn-ghost" style="padding:4px 8px;" data-key="${rec.sabado}">editar</button>` : ''}</td>
     `;
-    tr.querySelector('button').addEventListener('click', () => openSwapModal(rec.sabado));
+    if(isAdmin()){
+      tr.querySelector('button').addEventListener('click', () => openSwapModal(rec.sabado));
+    }
     tbody.appendChild(tr);
   });
 }
@@ -1397,7 +1428,45 @@ function renderHistory(){
   });
 }
 
+function isAdmin(){
+  return !!(adminUser && adminKey);
+}
+
+function renderAdminBar(){
+  const bar = document.getElementById('adminbar');
+  if(isAdmin()){
+    bar.innerHTML = `
+      <span class="badge-admin"><span class="dotgreen"></span>logado como <b>${adminUser}</b></span>
+      <button class="btn btn-ghost" id="logoutBtn" style="padding:4px 10px;">sair</button>
+    `;
+    bar.querySelector('#logoutBtn').addEventListener('click', logoutAdmin);
+  } else {
+    bar.innerHTML = `
+      <span class="badge-view"><span class="dotgray"></span>modo visualização</span>
+      <button class="btn btn-ghost" id="loginBtn" style="padding:4px 10px;">entrar como admin</button>
+    `;
+    bar.querySelector('#loginBtn').addEventListener('click', loginAsAdmin);
+  }
+}
+
+async function loginAsAdmin(){
+  const result = await apiSaveOverrides(overrides);
+  if(!result.ok && result.error !== 'Login cancelado.'){
+    alert('⚠ ' + result.error);
+  }
+  renderAll();
+}
+
+function logoutAdmin(){
+  adminUser = '';
+  adminKey = '';
+  sessionStorage.removeItem('plantao-admin-user');
+  sessionStorage.removeItem('plantao-admin-key');
+  renderAll();
+}
+
 function renderAll(){
+  renderAdminBar();
   renderStatusBar();
   renderKPIs();
   renderCalendarYear();
