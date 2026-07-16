@@ -52,3 +52,4 @@ export default async (req: Request, context: Context) => {
 export const config: Config = {
   path: "/api/overrides"
 };
+// build: variáveis de ambiente atualizadas para não-secretas
