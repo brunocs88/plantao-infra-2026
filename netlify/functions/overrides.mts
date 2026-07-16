@@ -1,7 +1,7 @@
 import type { Context, Config } from "@netlify/functions";
 import { getStore } from "@netlify/blobs";
 
-// Confere usuário e senha de administrador antes de salvar qualquer troca.
+// Confere usuário e senha de administrador antes de salvar qualquer troca (credenciais em variáveis de ambiente).
 export default async (req: Request, context: Context) => {
   const store = getStore("plantao-overrides");
 
