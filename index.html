@@ -5,28 +5,28 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Plantão Infra · 2026</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg: #0A0E14;
-    --bg-grid: #070a0f;
-    --panel: #10161D;
-    --panel-alt: #141B23;
-    --border: #212B36;
-    --border-soft: #1A222C;
-    --text: #E7EDF3;
-    --text-muted: #7C8B9A;
-    --text-dim: #4E5A67;
+    --bg: #F3F6FC;
+    --bg-grid: #eef2fa;
+    --panel: #FFFFFF;
+    --panel-alt: #F1F4FA;
+    --border: #E1E7F5;
+    --border-soft: #EBF0FA;
+    --text: #16234A;
+    --text-muted: #5B6786;
+    --text-dim: #98A3BE;
 
-    --bruno: #56E8C4;
-    --estanis: #F5A94E;
-    --pedro: #6FB4F0;
-    --vitor: #C99BF0;
-    --backup: #4E5A67;
+    --bruno: #0327A5;
+    --estanis: #0EA5A0;
+    --pedro: #7C5CFC;
+    --vitor: #E0507A;
+    --backup: #8C9AC2;
 
-    --holiday: #FFD166;
-    --today: #FF5C7A;
-    --next: #4FD1FF;
+    --holiday: #FA5E01;
+    --today: #E5484D;
+    --next: #15B371;
 
     --radius: 10px;
   }
@@ -37,16 +37,16 @@
     margin:0;
     background: var(--bg);
     background-image:
-      radial-gradient(circle at 15% 0%, rgba(86,232,196,0.06), transparent 45%),
-      radial-gradient(circle at 85% 100%, rgba(201,155,240,0.05), transparent 45%);
+      radial-gradient(circle at 15% 0%, rgba(3,39,165,0.05), transparent 45%),
+      radial-gradient(circle at 85% 100%, rgba(250,94,1,0.04), transparent 45%);
     color: var(--text);
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'Inter', sans-serif;
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
   }
 
   h1,h2,h3,.display{
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: 'Poppins', sans-serif;
   }
 
   .wrap{
@@ -55,7 +55,6 @@
     padding: 28px 20px 60px;
   }
 
-  /* ---------- HEADER / STATUS BAR ---------- */
   .statusbar{
     display:flex;
     align-items:center;
@@ -139,21 +138,21 @@
     display:flex;
     align-items:center;
     gap: 7px;
-    background: linear-gradient(135deg, rgba(86,232,196,0.16), rgba(201,155,240,0.14));
-    border: 1px solid rgba(86,232,196,0.4);
-    color: var(--text);
+    background: linear-gradient(135deg, #0327A5, #FA5E01);
+    border: none;
+    color: #FFFFFF;
     border-radius: 20px;
-    padding: 7px 16px 7px 12px;
-    font-family: 'JetBrains Mono', monospace;
+    padding: 8px 18px 8px 14px;
+    font-family: 'Inter', sans-serif;
     font-size: 12px;
     font-weight: 600;
     cursor: pointer;
-    transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+    box-shadow: 0 2px 10px rgba(3,39,165,0.25);
+    transition: transform .15s ease, box-shadow .15s ease;
   }
   .btn-admin-enter:hover{
     transform: translateY(-1px);
-    border-color: var(--bruno);
-    box-shadow: 0 4px 16px rgba(86,232,196,0.25);
+    box-shadow: 0 6px 18px rgba(3,39,165,0.32);
   }
   .btn-admin-enter .lock{
     font-size: 13px;
@@ -161,8 +160,8 @@
   .adminbar .badge-admin{
     display:flex; align-items:center; gap:6px;
     color: var(--bruno);
-    background: rgba(86,232,196,0.1);
-    border: 1px solid rgba(86,232,196,0.3);
+    background: rgba(3,39,165,0.07);
+    border: 1px solid rgba(3,39,165,0.25);
     border-radius: 20px;
     padding: 6px 14px;
   }
@@ -174,19 +173,29 @@
 
   header.hero{
     margin-bottom: 28px;
+    display:flex;
+    align-items:center;
+    gap: 18px;
   }
+  header.hero .brand-logo{
+    height: 52px;
+    width: auto;
+    flex-shrink: 0;
+  }
+  header.hero .hero-titles{ min-width:0; }
   header.hero .eyebrow{
     font-size: 12px;
     letter-spacing: .12em;
     text-transform: uppercase;
     color: var(--text-dim);
-    margin-bottom: 8px;
+    margin-bottom: 4px;
   }
   header.hero h1{
-    font-size: 34px;
+    font-size: 28px;
     font-weight: 700;
-    margin: 0 0 8px;
+    margin: 0;
     letter-spacing: -0.01em;
+    color: var(--text);
   }
   header.hero p{
     color: var(--text-muted);
@@ -195,7 +204,6 @@
     margin: 0;
   }
 
-  /* ---------- KPI CARDS ---------- */
   .kpis{
     display:grid;
     grid-template-columns: repeat(4, 1fr);
@@ -220,7 +228,7 @@
   }
   .kpi-card.active{ border-color: var(--c); }
   .kpi-card .name{
-    font-family:'Space Grotesk',sans-serif;
+    font-family:'Poppins',sans-serif;
     font-weight:600;
     font-size:15px;
     color: var(--text);
@@ -263,7 +271,6 @@
   }
   .backups-row .kpi-card .big{ font-size:22px; }
 
-  /* ---------- RACK VIEW (signature element) ---------- */
   .rack-section{
     background: var(--panel);
     border: 1px solid var(--border);
@@ -321,7 +328,7 @@
     background: var(--holiday);
     border-radius: 3px;
     transform: rotate(45deg);
-    box-shadow: 0 0 6px rgba(255,209,102,0.8);
+    box-shadow: 0 0 6px rgba(250,94,1,0.7);
   }
   .rack-cell .badge-backup{
     position:absolute;
@@ -335,7 +342,6 @@
     outline-offset: 1px;
   }
 
-  /* ---------- MONTH CALENDAR VIEW ---------- */
   .calendar-year{
     display:grid;
     grid-template-columns: repeat(4, 1fr);
@@ -348,7 +354,7 @@
     padding: 10px;
   }
   .month-title{
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: 'Poppins', sans-serif;
     font-size: 12.5px;
     font-weight: 600;
     margin-bottom: 7px;
@@ -383,8 +389,8 @@
   .day-cell.empty{ visibility:hidden; }
   .day-cell.weekend-off{ color: var(--text-muted); }
   .day-cell.plantao{
-    background: var(--c);
-    color: rgba(4,17,13,0.82);
+    background: color-mix(in srgb, var(--c) 30%, white);
+    color: rgba(10,20,50,0.85);
     font-weight: 700;
     cursor: pointer;
     transition: transform .12s ease, box-shadow .12s ease, opacity .12s ease;
@@ -398,7 +404,7 @@
     inset: -2px;
     border-radius: 6px;
     border: 2px solid var(--holiday);
-    box-shadow: 0 0 5px rgba(255,209,102,.6);
+    box-shadow: 0 0 5px rgba(250,94,1,.5);
     pointer-events:none;
   }
   .day-cell .hol-ring.facultativo{
@@ -419,7 +425,7 @@
   .day-cell.next-shift{
     outline: 2px solid var(--next);
     outline-offset: 2px;
-    box-shadow: 0 0 8px rgba(79,209,255,0.55);
+    box-shadow: 0 0 8px rgba(21,179,113,0.5);
   }
   .day-cell.next-shift::after{
     content: 'PRÓX';
@@ -450,7 +456,6 @@
   .day-cell.plantao:hover .edit-dot{ opacity: 1; }
   .day-cell.overridden{ box-shadow: inset 0 0 0 2px var(--today); }
 
-  /* ---------- SWAP MODAL ---------- */
   .modal-overlay{
     display:none;
     position: fixed; inset:0;
@@ -493,7 +498,7 @@
     color: var(--text-muted);
     border-radius: 6px;
     padding: 7px 10px;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'Inter', sans-serif;
     font-size: 11px;
     cursor:pointer;
   }
@@ -528,10 +533,10 @@
     gap: 6px;
   }
   .suggestion-pill:hover{ border-color: var(--bruno); }
-  .suggestion-pill.chosen{ background: var(--bruno); color:#04110d; border-color: var(--bruno); font-weight:600; }
+  .suggestion-pill.chosen{ background: var(--bruno); color:#fff; border-color: var(--bruno); font-weight:600; }
   .suggestion-pill.recommended{ border-color: var(--holiday); }
   .suggestion-pill .cnt{ color: var(--text-muted); font-size:10px; }
-  .suggestion-pill.chosen .cnt{ color: rgba(4,17,13,0.6); }
+  .suggestion-pill.chosen .cnt{ color: rgba(255,255,255,0.75); }
   .suggestion-pill .rec-tag{ color: var(--holiday); font-size:10px; }
 
   .modal select, .modal input[type=text], .modal input[type=password]{
@@ -541,7 +546,7 @@
     color: var(--text);
     border-radius: 6px;
     padding: 8px 10px;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'Inter', sans-serif;
     font-size: 12px;
   }
   .modal .hint{ font-size: 10px; color: var(--text-dim); margin-top: 5px; }
@@ -560,13 +565,13 @@
     border-radius: 6px;
     padding: 9px 14px;
     font-size: 12px;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'Inter', sans-serif;
     cursor:pointer;
     border: 1px solid var(--border);
     background: var(--panel-alt);
     color: var(--text);
   }
-  .btn-primary{ background: var(--bruno); color:#04110d; border-color:var(--bruno); font-weight:600; }
+  .btn-primary{ background: var(--bruno); color:#fff; border-color:var(--bruno); font-weight:600; }
   .btn:disabled{ opacity: .35; cursor: not-allowed; }
   .btn-ghost{ background:transparent; color: var(--text-muted); border-color: transparent; }
   .btn-danger{ color: var(--today); border-color: rgba(255,92,122,0.4); background:transparent; }
@@ -582,7 +587,6 @@
   }
   .current-override-box b{ color: var(--text); }
 
-  /* ---------- HISTORY ---------- */
   .history-section{
     margin-top: 20px;
     background: var(--panel);
@@ -622,28 +626,26 @@
   .rack-legend .dot{ width:7px; height:7px; border-radius:50%; background: rgba(255,255,255,0.35); }
   .rack-legend .ring-sample{ width:10px; height:10px; border-radius:3px; outline:2px solid var(--next); outline-offset:1px; }
 
-  /* tooltip */
   #tooltip{
     position: fixed;
     pointer-events:none;
-    background: #060809;
-    border: 1px solid var(--border);
+    background: #16181F;
+    border: 1px solid #2A2E3D;
     border-radius: 8px;
     padding: 10px 12px;
     font-size: 11px;
-    color: var(--text);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    color: #F3F6FC;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
     z-index: 50;
     opacity:0;
     transition: opacity .1s ease;
     max-width: 240px;
   }
   #tooltip.show{ opacity:1; }
-  #tooltip .t-title{ font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:12px; margin-bottom:4px;}
-  #tooltip .t-line{ color: var(--text-muted); margin-top:2px; }
-  #tooltip .t-fer{ color: var(--holiday); margin-top:4px; }
+  #tooltip .t-title{ font-family:'Poppins',sans-serif; font-weight:600; font-size:12px; margin-bottom:4px;}
+  #tooltip .t-line{ color: #AEB9D6; margin-top:2px; }
+  #tooltip .t-fer{ color: #FFB27A; margin-top:4px; }
 
-  /* ---------- TABLE ---------- */
   .table-section{
     background: var(--panel);
     border: 1px solid var(--border);
@@ -672,7 +674,7 @@
     color: var(--text);
     border-radius: 6px;
     padding: 6px 10px;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'Inter', sans-serif;
     font-size: 12px;
   }
   .checkbox-lbl{
@@ -713,9 +715,9 @@
   .tag-person .sw{ width:8px;height:8px;border-radius:50%; }
   .fer-pill{
     display:inline-block;
-    background: rgba(255,209,102,0.12);
+    background: rgba(250,94,1,0.10);
     color: var(--holiday);
-    border: 1px solid rgba(255,209,102,0.35);
+    border: 1px solid rgba(250,94,1,0.3);
     border-radius: 20px;
     padding: 2px 9px;
     font-size: 10px;
@@ -749,8 +751,11 @@
   <div class="adminbar" id="adminbar"></div>
 
   <header class="hero">
-    <div class="eyebrow">Escala Plantão Infra · Farma Conde</div>
-    <h1>Plantão 2026</h1>
+    <img src="logo.png" alt="Farma Conde" class="brand-logo">
+    <div class="hero-titles">
+      <div class="eyebrow">Escala Plantão Infra</div>
+      <h1>Plantão 2026</h1>
+    </div>
   </header>
 
   <section class="kpis" id="kpis"></section>
@@ -829,10 +834,10 @@ const PERSON_COLORS = {
   'Vitor': 'var(--vitor)',
 };
 const PERSON_COLOR_HEX = {
-  'Bruno': '#56E8C4',
-  'Estanis': '#F5A94E',
-  'Pedro': '#6FB4F0',
-  'Vitor': '#C99BF0',
+  'Bruno': '#0327A5',
+  'Estanis': '#0EA5A0',
+  'Pedro': '#7C5CFC',
+  'Vitor': '#E0507A',
 };
 
 const TITULARES = Object.keys(PERSON_COLOR_HEX);
@@ -859,7 +864,6 @@ async function loadOverrides(){
   }
 }
 
-// Mostra um modal de login (usuário + senha) e resolve com {user, pass} ou null se cancelado.
 function promptLogin(errorMsg){
   return new Promise((resolve) => {
     const overlay = document.getElementById('loginOverlay');
@@ -898,8 +902,6 @@ document.getElementById('loginOverlay').addEventListener('click', (e) => {
   if(e.target.id === 'loginOverlay') e.currentTarget.classList.remove('show');
 });
 
-// Tenta salvar um novo conjunto de overrides no servidor.
-// Só aplica localmente (overrides = newOverrides) se o servidor aceitar as credenciais.
 async function apiSaveOverrides(newOverrides){
   let user = adminUser, key = adminKey;
   let errorMsg = null;
@@ -969,7 +971,6 @@ let activePerson = null;
 let onlyHoliday = false;
 let tableFilterPerson = '';
 
-// ---------- STATUS BAR ----------
 function renderStatusBar(){
   const bar = document.getElementById('statusbar');
   const data = getEffectiveData();
@@ -999,7 +1000,6 @@ function tickClock(){
 }
 setInterval(tickClock, 1000);
 
-// ---------- KPI CARDS ----------
 function computeCounts(){
   const counts = {};
   getEffectiveData().forEach(rec => {
@@ -1099,7 +1099,6 @@ function renderComparativeChart(counts, titularNames){
   }).join('');
 }
 
-// ---------- MONTH CALENDAR VIEW ----------
 function buildDayMap(){
   const map = {};
   getEffectiveData().forEach(rec => {
@@ -1269,7 +1268,6 @@ function hideTooltip(){
   document.getElementById('tooltip').classList.remove('show');
 }
 
-// ---------- TABLE ----------
 function renderTable(){
   const tbody = document.getElementById('tbody');
   tbody.innerHTML = '';
@@ -1316,7 +1314,6 @@ document.getElementById('onlyHoliday').addEventListener('change', (e) => {
   renderAll();
 });
 
-// ---------- SUBSTITUIÇÃO / FÉRIAS ----------
 let modalState = { key: null, role: 'titular', chosen: null };
 
 function monthKey(iso){ return iso.slice(0,7); }
@@ -1465,7 +1462,7 @@ function fireConfetti(){
       particleCount: 90,
       spread: 75,
       origin: { y: 0.25 },
-      colors: ['#56E8C4', '#F5A94E', '#6FB4F0', '#C99BF0', '#FFD166']
+      colors: ['#0327A5', '#FA5E01', '#0EA5A0', '#7C5CFC', '#E0507A']
     });
   }
 }
@@ -1533,7 +1530,6 @@ document.getElementById('modalOverlay').addEventListener('click', (e) => {
   if(e.target.id === 'modalOverlay') closeModal();
 });
 
-// ---------- HISTORY ----------
 function renderHistory(){
   const list = document.getElementById('historyList');
   const section = document.getElementById('historySection');
