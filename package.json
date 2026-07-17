@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "dependencies": {
     "@netlify/blobs": "^8.2.0",
-    "@netlify/functions": "^2.8.2"
+    "@netlify/functions": "^2.8.2",
+    "@vercel/kv": "^3.0.0"
   }
 }
