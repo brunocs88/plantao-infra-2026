@@ -1,11 +1,16 @@
-import { kv } from '@vercel/kv';
+import { Redis } from '@upstash/redis';
+
+const redis = new Redis({
+  url: process.env.STORAGE_URL,
+  token: process.env.STORAGE_TOKEN,
+});
 
 // GET  → devolve as trocas salvas
-// POST → valida credenciais e salva as trocas (requer ADMIN_USER e ADMIN_KEY nas env vars)
+// POST → valida credenciais e salva as trocas
 export default async function handler(req, res) {
   try {
     if (req.method === 'GET') {
-      const data = await kv.get('plantao-overrides');
+      const data = await redis.get('plantao-overrides');
       return res.status(200).json(data || {});
     }
 
@@ -23,7 +28,7 @@ export default async function handler(req, res) {
       }
 
       const body = req.body;
-      await kv.set('plantao-overrides', body);
+      await redis.set('plantao-overrides', body);
       return res.status(200).json({ ok: true });
     }
 
