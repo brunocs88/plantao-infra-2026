@@ -1372,7 +1372,7 @@ function buildModal(){
       ${ranked.slice(0,5).map(n => pillHtml(n, false)).join('')}
     </div>
 
-    <label class="field-label">Ou escolha qualquer pessoa (ex: alguém quer fazer extra)</label>
+    <label class="field-label">Ou escolha qualquer pessoa (use esta opção para incluir um plantão extra)</label>
     <select id="anyPersonSelect">
       <option value="">— selecionar —</option>
       ${ALL_PEOPLE.filter(p=>p!==currentPerson && p!==(role==='titular'?rec.backup:rec.titular)).map(p => `<option value="${p}" ${modalState.chosen===p?'selected':''}>${p}</option>`).join('')}
