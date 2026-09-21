@@ -787,6 +787,10 @@
   <div class="modal" id="loginBox" style="max-width:340px;"></div>
 </div>
 
+<div class="modal-overlay" id="replaceOverlay" style="z-index:150;">
+  <div class="modal" id="replaceBox" style="max-width:440px;"></div>
+</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.9.3/confetti.browser.min.js"></script>
 <script>
 const DATA = [{"sabado": "2026-01-03", "domingo": "2026-01-04", "titular": "Vitor", "backup": null, "raw": "03 e 04: Vitor", "feriados": [], "tem_feriado": false}, {"sabado": "2026-01-10", "domingo": "2026-01-11", "titular": "Pedro", "backup": "Edvaldo", "raw": "10 e 11: Pedro (+ Edvaldo)", "feriados": [], "tem_feriado": false}, {"sabado": "2026-01-17", "domingo": "2026-01-18", "titular": "Bruno", "backup": null, "raw": "17 e 18: Bruno", "feriados": [], "tem_feriado": false}, {"sabado": "2026-01-24", "domingo": "2026-01-25", "titular": "Estanis", "backup": "Randal", "raw": "24 e 25: Estanis (+ Randal)", "feriados": [], "tem_feriado": false}, {"sabado": "2026-01-31", "domingo": "2026-02-01", "titular": "Vitor", "backup": null, "raw": "31 e 01: Vitor", "feriados": [], "tem_feriado": false}, {"sabado": "2026-02-07", "domingo": "2026-02-08", "titular": "Estanis", "backup": null, "raw": "07 e 08: Estanis", "feriados": [], "tem_feriado": false}, {"sabado": "2026-02-14", "domingo": "2026-02-15", "titular": "Bruno", "backup": "Edvaldo", "raw": "14 e 15: Bruno (+ Edvaldo)", "feriados": [{"data": "2026-02-16", "nome": "Carnaval (segunda)", "categoria": "facultativo"}], "tem_feriado": true}, {"sabado": "2026-02-21", "domingo": "2026-02-22", "titular": "Pedro", "backup": null, "raw": "21 e 22: Pedro", "feriados": [], "tem_feriado": false}, {"sabado": "2026-02-28", "domingo": "2026-03-01", "titular": "Vitor", "backup": "Randal", "raw": "28 e 01: Vitor (+ Randal)", "feriados": [], "tem_feriado": false}, {"sabado": "2026-03-07", "domingo": "2026-03-08", "titular": "Vitor", "backup": null, "raw": "07 e 08: Vitor", "feriados": [], "tem_feriado": false}, {"sabado": "2026-03-14", "domingo": "2026-03-15", "titular": "Bruno", "backup": "Edvaldo", "raw": "14 e 15: Bruno (+ Edvaldo)", "feriados": [], "tem_feriado": false}, {"sabado": "2026-03-21", "domingo": "2026-03-22", "titular": "Estanis", "backup": "Randal", "raw": "21 e 22: Estanis (+ Randal)", "feriados": [], "tem_feriado": false}, {"sabado": "2026-03-28", "domingo": "2026-03-29", "titular": "Vitor", "backup": null, "raw": "28 e 29: Vitor", "feriados": [], "tem_feriado": false}, {"sabado": "2026-04-04", "domingo": "2026-04-05", "titular": "Pedro", "backup": "Edvaldo", "raw": "04 e 05: Pedro (+ Edvaldo)", "feriados": [{"data": "2026-04-03", "nome": "Sexta-feira Santa", "categoria": "nacional"}], "tem_feriado": true}, {"sabado": "2026-04-11", "domingo": "2026-04-12", "titular": "Bruno", "backup": null, "raw": "11 e 12: Bruno", "feriados": [], "tem_feriado": false}, {"sabado": "2026-04-18", "domingo": "2026-04-19", "titular": "Estanis", "backup": "Randal", "raw": "18 e 19: Estanis (+ Randal)", "feriados": [], "tem_feriado": false}, {"sabado": "2026-04-25", "domingo": "2026-04-26", "titular": "Vitor", "backup": null, "raw": "25 e 26: Vitor", "feriados": [], "tem_feriado": false}, {"sabado": "2026-05-02", "domingo": "2026-05-03", "titular": "Pedro", "backup": null, "raw": "02 e 03: Pedro", "feriados": [{"data": "2026-05-01", "nome": "Dia do Trabalho", "categoria": "nacional"}], "tem_feriado": true}, {"sabado": "2026-05-09", "domingo": "2026-05-10", "titular": "Bruno", "backup": "Edvaldo", "raw": "09 e 10: Bruno (+ Edvaldo)", "feriados": [], "tem_feriado": false}, {"sabado": "2026-05-16", "domingo": "2026-05-17", "titular": "Vitor", "backup": "Randal", "raw": "16 e 17: Vitor (+ Randal)", "feriados": [], "tem_feriado": false}, {"sabado": "2026-05-23", "domingo": "2026-05-24", "titular": "Estanis", "backup": null, "raw": "23 e 24: Estanis", "feriados": [], "tem_feriado": false}, {"sabado": "2026-05-30", "domingo": "2026-05-31", "titular": "Pedro", "backup": null, "raw": "30 e 31: Pedro", "feriados": [], "tem_feriado": false}, {"sabado": "2026-06-06", "domingo": "2026-06-07", "titular": "Bruno", "backup": null, "raw": "06 e 07: Bruno", "feriados": [], "tem_feriado": false}, {"sabado": "2026-06-13", "domingo": "2026-06-14", "titular": "Estanis", "backup": "Edvaldo", "raw": "13 e 14: Estanis (+ Edvaldo)", "feriados": [], "tem_feriado": false}, {"sabado": "2026-06-20", "domingo": "2026-06-21", "titular": "Vitor", "backup": null, "raw": "20 e 21: Vitor", "feriados": [], "tem_feriado": false}, {"sabado": "2026-06-27", "domingo": "2026-06-28", "titular": "Pedro", "backup": "Randal", "raw": "27 e 28: Pedro (+ Randal)", "feriados": [], "tem_feriado": false}, {"sabado": "2026-07-04", "domingo": "2026-07-05", "titular": "Bruno", "backup": "Edvaldo", "raw": "04 e 05: Bruno (+ Edvaldo)", "feriados": [], "tem_feriado": false}, {"sabado": "2026-07-11", "domingo": "2026-07-12", "titular": "Estanis", "backup": null, "raw": "11 e 12: Estanis", "feriados": [], "tem_feriado": false}, {"sabado": "2026-07-18", "domingo": "2026-07-19", "titular": "Pedro", "backup": "Randal", "raw": "18 e 19: Pedro (+ Randal)", "feriados": [], "tem_feriado": false}, {"sabado": "2026-07-25", "domingo": "2026-07-26", "titular": "Vitor", "backup": null, "raw": "25 e 26: Vitor", "feriados": [{"data": "2026-07-27", "nome": "Aniversário de São José dos Campos", "categoria": "municipal-SJC"}], "tem_feriado": true}, {"sabado": "2026-08-01", "domingo": "2026-08-02", "titular": "Bruno", "backup": null, "raw": "01 e 02: Bruno", "feriados": [], "tem_feriado": false}, {"sabado": "2026-08-08", "domingo": "2026-08-09", "titular": "Estanis", "backup": "Edvaldo", "raw": "08 e 09: Estanis (+ Edvaldo)", "feriados": [], "tem_feriado": false}, {"sabado": "2026-08-15", "domingo": "2026-08-16", "titular": "Pedro", "backup": null, "raw": "15 e 16: Pedro", "feriados": [], "tem_feriado": false}, {"sabado": "2026-08-22", "domingo": "2026-08-23", "titular": "Vitor", "backup": "Randal", "raw": "22 e 23: Vitor (+ Randal)", "feriados": [], "tem_feriado": false}, {"sabado": "2026-08-29", "domingo": "2026-08-30", "titular": "Bruno", "backup": null, "raw": "29 e 30: Bruno", "feriados": [], "tem_feriado": false}, {"sabado": "2026-09-05", "domingo": "2026-09-06", "titular": "Estanis", "backup": null, "raw": "05 e 06: Estanis", "feriados": [{"data": "2026-09-07", "nome": "Independência do Brasil", "categoria": "nacional"}], "tem_feriado": true}, {"sabado": "2026-09-12", "domingo": "2026-09-13", "titular": "Vitor", "backup": "Edvaldo", "raw": "12 e 13: Vitor (+ Edvaldo)", "feriados": [], "tem_feriado": false}, {"sabado": "2026-09-19", "domingo": "2026-09-20", "titular": "Pedro", "backup": null, "raw": "19 e 20: Pedro", "feriados": [], "tem_feriado": false}, {"sabado": "2026-09-26", "domingo": "2026-09-27", "titular": "Bruno", "backup": "Randal", "raw": "26 e 27: Bruno (+ Randal)", "feriados": [], "tem_feriado": false}, {"sabado": "2026-10-03", "domingo": "2026-10-04", "titular": "Estanis", "backup": "Edvaldo", "raw": "03 e 04: Estanis (+ Edvaldo)", "feriados": [], "tem_feriado": false}, {"sabado": "2026-10-10", "domingo": "2026-10-11", "titular": "Vitor", "backup": null, "raw": "10 e 11: Vitor", "feriados": [{"data": "2026-10-12", "nome": "Nossa Senhora Aparecida", "categoria": "nacional"}], "tem_feriado": true}, {"sabado": "2026-10-17", "domingo": "2026-10-18", "titular": "Pedro", "backup": "Randal", "raw": "17 e 18: Pedro (+ Randal)", "feriados": [], "tem_feriado": false}, {"sabado": "2026-10-24", "domingo": "2026-10-25", "titular": "Bruno", "backup": null, "raw": "24 e 25: Bruno", "feriados": [], "tem_feriado": false}, {"sabado": "2026-10-31", "domingo": "2026-11-01", "titular": "Vitor", "backup": null, "raw": "31 e 01: Vitor", "feriados": [{"data": "2026-11-02", "nome": "Finados", "categoria": "nacional"}], "tem_feriado": true}, {"sabado": "2026-11-07", "domingo": "2026-11-08", "titular": "Estanis", "backup": "Edvaldo", "raw": "07 e 08: Estanis (+ Edvaldo)", "feriados": [], "tem_feriado": false}, {"sabado": "2026-11-14", "domingo": "2026-11-15", "titular": "Pedro", "backup": null, "raw": "14 e 15: Pedro", "feriados": [{"data": "2026-11-15", "nome": "Proclamação da República", "categoria": "nacional"}], "tem_feriado": true}, {"sabado": "2026-11-21", "domingo": "2026-11-22", "titular": "Bruno", "backup": "Randal", "raw": "21 e 22: Bruno (+ Randal)", "feriados": [{"data": "2026-11-20", "nome": "Consciência Negra", "categoria": "nacional/estadual-SP"}], "tem_feriado": true}, {"sabado": "2026-11-28", "domingo": "2026-11-29", "titular": "Vitor", "backup": null, "raw": "28 e 29: Vitor", "feriados": [], "tem_feriado": false}, {"sabado": "2026-12-05", "domingo": "2026-12-06", "titular": "Pedro", "backup": "Edvaldo", "raw": "05 e 06: Pedro (+ Edvaldo)", "feriados": [], "tem_feriado": false}, {"sabado": "2026-12-12", "domingo": "2026-12-13", "titular": "Bruno", "backup": null, "raw": "12 e 13: Bruno", "feriados": [], "tem_feriado": false}, {"sabado": "2026-12-19", "domingo": "2026-12-20", "titular": "Vitor", "backup": "Randal", "raw": "19 e 20: Vitor (+ Randal)", "feriados": [], "tem_feriado": false}, {"sabado": "2026-12-26", "domingo": "2026-12-27", "titular": "Estanis", "backup": null, "raw": "26 e 27: Estanis", "feriados": [{"data": "2026-12-25", "nome": "Natal", "categoria": "nacional"}], "tem_feriado": true}];
@@ -808,11 +812,18 @@ const PERSON_COLOR_HEX = {
 };
 
 const TITULARES = Object.keys(PERSON_COLOR_HEX);
-const ALL_PEOPLE = (() => {
+let ALL_PEOPLE = [];
+function computeAllPeople(){
   const set = new Set(TITULARES);
   DATA.forEach(r => { if(r.backup) set.add(r.backup); });
-  return [...set];
-})();
+  // inclui qualquer pessoa que já apareça em uma troca/substituição salva
+  Object.entries(overrides).forEach(([key, o]) => {
+    if(!DATA.find(r => r.sabado === key)) return;
+    if(o && o.titular) set.add(o.titular);
+    if(o && o.backup) set.add(o.backup);
+  });
+  ALL_PEOPLE = [...set];
+}
 
 const STORAGE_KEY = 'plantao-2026-overrides';
 let overrides = {};
@@ -1501,6 +1512,163 @@ document.getElementById('modalOverlay').addEventListener('click', (e) => {
   if(e.target.id === 'modalOverlay') closeModal();
 });
 
+let replaceState = { from: null, to: null };
+
+function futureShiftsOf(person){
+  const TODAY = getToday();
+  return getEffectiveData().filter(rec => {
+    if(new Date(rec.domingo+'T00:00:00') < TODAY) return false;
+    return rec.titular === person || rec.backup === person;
+  });
+}
+
+function peopleWithFutureShifts(){
+  const set = new Set();
+  getEffectiveData().forEach(rec => {
+    if(new Date(rec.domingo+'T00:00:00') < getToday()) return;
+    if(rec.titular) set.add(rec.titular);
+    if(rec.backup) set.add(rec.backup);
+  });
+  return [...set];
+}
+
+function openReplaceModal(){
+  replaceState = { from: null, to: null };
+  document.getElementById('replaceOverlay').classList.add('show');
+  buildReplaceModal();
+}
+function closeReplaceModal(){
+  document.getElementById('replaceOverlay').classList.remove('show');
+}
+document.getElementById('replaceOverlay').addEventListener('click', (e) => {
+  if(e.target.id === 'replaceOverlay') closeReplaceModal();
+});
+
+function buildReplaceModal(){
+  const box = document.getElementById('replaceBox');
+  const candidates = peopleWithFutureShifts();
+  const affected = replaceState.from ? futureShiftsOf(replaceState.from) : [];
+
+  box.innerHTML = `
+    <h3>Substituir funcionário</h3>
+    <div class="modal-sub">Funcionário desligado, novo funcionário assume automaticamente todos os plantões futuros dele (a partir de hoje). Plantões já cumpridos ficam registrados como estavam.</div>
+
+    <label class="field-label">Funcionário que saiu</label>
+    <select id="replaceFromSelect">
+      <option value="">— selecionar —</option>
+      ${candidates.map(p => `<option value="${p}" ${replaceState.from===p?'selected':''}>${p}</option>`).join('')}
+    </select>
+
+    ${replaceState.from ? `<div class="modal-sub" style="margin-top:6px;">${affected.length===0 ? 'Nenhum plantão futuro encontrado para essa pessoa.' : `<b>${affected.length}</b> plantão(ões) futuro(s) será(ão) transferido(s).`}</div>` : ''}
+
+    <label class="field-label" style="margin-top:12px;">Novo funcionário</label>
+    <select id="replaceToSelect">
+      <option value="">— selecionar —</option>
+      ${ALL_PEOPLE.filter(p => p !== replaceState.from).map(p => `<option value="${p}" ${replaceState.to===p?'selected':''}>${p}</option>`).join('')}
+      <option value="__new__">+ pessoa nova...</option>
+    </select>
+    <div id="replaceNewNameWrap" style="display:none; margin-top:8px;">
+      <input type="text" id="replaceNewNameInput" placeholder="Nome da pessoa">
+    </div>
+
+    <label class="field-label">Motivo (opcional)</label>
+    <input type="text" id="replaceMotivoInput" placeholder="ex: desligamento, saída da empresa">
+
+    <div class="modal-actions">
+      <div></div>
+      <div style="display:flex; gap:8px;">
+        <button class="btn btn-ghost" id="replaceCancelBtn">cancelar</button>
+        <button class="btn btn-primary" id="replaceConfirmBtn" ${(!replaceState.from || !replaceState.to || affected.length===0) ? 'disabled' : ''}>substituir</button>
+      </div>
+    </div>
+  `;
+
+  box.querySelector('#replaceFromSelect').addEventListener('change', (e) => {
+    replaceState.from = e.target.value || null;
+    buildReplaceModal();
+  });
+  const toSel = box.querySelector('#replaceToSelect');
+  toSel.addEventListener('change', () => {
+    if(toSel.value === '__new__'){
+      box.querySelector('#replaceNewNameWrap').style.display = 'block';
+      replaceState.to = null;
+    } else {
+      replaceState.to = toSel.value || null;
+      box.querySelector('#replaceNewNameWrap').style.display = 'none';
+    }
+    buildReplaceModal();
+  });
+  const newNameInput = box.querySelector('#replaceNewNameInput');
+  if(newNameInput){
+    newNameInput.addEventListener('input', () => {
+      replaceState.to = newNameInput.value.trim() || null;
+      box.querySelector('#replaceConfirmBtn').disabled = (!replaceState.from || !replaceState.to || affected.length===0);
+    });
+  }
+  box.querySelector('#replaceCancelBtn').addEventListener('click', closeReplaceModal);
+  const confirmBtn = box.querySelector('#replaceConfirmBtn');
+  if(confirmBtn) confirmBtn.addEventListener('click', applyReplacement);
+}
+
+async function applyReplacement(){
+  const box = document.getElementById('replaceBox');
+  const from = replaceState.from;
+  const to = replaceState.to;
+  const motivo = box.querySelector('#replaceMotivoInput').value.trim();
+  if(!from || !to || from === to) return;
+
+  const TODAY = getToday();
+  const candidate = { ...overrides };
+  let count = 0;
+
+  DATA.forEach(base => {
+    if(new Date(base.domingo+'T00:00:00') < TODAY) return; // já cumprido: mantém como está
+    const existing = overrides[base.sabado];
+    const effTitular = existing ? existing.titular : base.titular;
+    const effBackup = existing ? existing.backup : base.backup;
+    if(effTitular !== from && effBackup !== from) return;
+
+    const newTitular = effTitular === from ? to : effTitular;
+    const newBackup = effBackup === from ? to : effBackup;
+
+    candidate[base.sabado] = {
+      titular: newTitular,
+      backup: newBackup,
+      motivo: motivo || `Substituição de funcionário: ${from} → ${to}`,
+      original_titular: existing ? existing.original_titular : base.titular,
+      original_backup: existing ? existing.original_backup : base.backup,
+      ts: Date.now()
+    };
+    count++;
+  });
+
+  if(count === 0){
+    showReplaceError('Nenhum plantão futuro encontrado para essa pessoa.');
+    return;
+  }
+
+  const result = await apiSaveOverrides(candidate);
+  if(!result.ok){
+    showReplaceError(result.error);
+    return;
+  }
+  fireConfetti();
+  closeReplaceModal();
+  renderAll();
+}
+
+function showReplaceError(msg){
+  const box = document.getElementById('replaceBox');
+  let el = box.querySelector('.modal-error');
+  if(!el){
+    el = document.createElement('div');
+    el.className = 'modal-error';
+    el.style.cssText = 'color:var(--today); font-size:11px; margin-top:10px;';
+    box.querySelector('.modal-actions').before(el);
+  }
+  el.textContent = '⚠ ' + msg;
+}
+
 function renderHistory(){
   const list = document.getElementById('historyList');
   const section = document.getElementById('historySection');
@@ -1540,9 +1708,11 @@ function renderAdminBar(){
   if(isAdmin()){
     bar.innerHTML = `
       <span class="badge-admin"><span class="dotgreen"></span>logado como <b>${adminUser}</b></span>
+      <button class="btn btn-ghost" id="replaceEmployeeBtn" style="padding:6px 14px;">🔁 substituir funcionário</button>
       <button class="btn btn-ghost" id="logoutBtn" style="padding:6px 14px;">sair</button>
     `;
     bar.querySelector('#logoutBtn').addEventListener('click', logoutAdmin);
+    bar.querySelector('#replaceEmployeeBtn').addEventListener('click', openReplaceModal);
   } else {
     bar.innerHTML = `
       <button class="btn-admin-enter" id="loginBtn"><span class="lock">🔒</span>entrar como admin</button>
@@ -1569,6 +1739,7 @@ function logoutAdmin(){
 }
 
 function renderAll(){
+  computeAllPeople();
   renderAdminBar();
   renderStatusBar();
   renderKPIs();
