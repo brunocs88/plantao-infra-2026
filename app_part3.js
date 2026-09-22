@@ -228,7 +228,7 @@ document.getElementById('modalOverlay').addEventListener('click', (e) => {
   if(e.target.id === 'modalOverlay') closeModal();
 });
 
-let replaceState = { from: null, to: null, toIsNew: false };
+let replaceState = { from: null, to: null, toIsNew: false, mode: null };
 
 function futureShiftsOf(person){
   const TODAY = getToday();
@@ -249,7 +249,7 @@ function peopleWithFutureShifts(){
 }
 
 function openReplaceModal(){
-  replaceState = { from: null, to: null, toIsNew: false };
+  replaceState = { from: null, to: null, toIsNew: false, mode: null };
   document.getElementById('replaceOverlay').classList.add('show');
   buildReplaceModal();
 }
@@ -282,10 +282,12 @@ function buildReplaceModal(){
       <option value="">— selecionar —</option>
       ${ALL_PEOPLE.filter(p => p !== replaceState.from).map(p => `<option value="${p}" ${replaceState.to===p?'selected':''}>${p}</option>`).join('')}
       <option value="__new__" ${replaceState.toIsNew ? 'selected' : ''}>+ pessoa nova...</option>
+      <option value="__redistribute__" ${replaceState.mode==='redistribute' ? 'selected' : ''}>— não contratar (redistribuir entre a equipe) —</option>
     </select>
     <div id="replaceNewNameWrap" style="display:${replaceState.toIsNew ? 'block' : 'none'}; margin-top:8px;">
       <input type="text" id="replaceNewNameInput" placeholder="Nome da pessoa" value="${replaceState.toIsNew ? (replaceState.to || '') : ''}">
     </div>
+    ${replaceState.mode==='redistribute' ? `<div class="modal-sub" style="margin-top:8px;">Os plantões como titular serão redistribuídos entre o restante da equipe, dando preferência a quem tem menos plantões no ano. Plantões em que ${replaceState.from} era só backup ficam sem backup.</div>` : ''}
 
     <label class="field-label">Motivo (opcional)</label>
     <input type="text" id="replaceMotivoInput" placeholder="ex: desligamento, saída da empresa">
@@ -294,7 +296,7 @@ function buildReplaceModal(){
       <div></div>
       <div style="display:flex; gap:8px;">
         <button class="btn btn-ghost" id="replaceCancelBtn">cancelar</button>
-        <button class="btn btn-primary" id="replaceConfirmBtn" ${(!replaceState.from || !replaceState.to || affected.length===0) ? 'disabled' : ''}>substituir</button>
+        <button class="btn btn-primary" id="replaceConfirmBtn" ${(!replaceState.from || (replaceState.mode!=='redistribute' && !replaceState.to) || affected.length===0) ? 'disabled' : ''}>${replaceState.mode==='redistribute' ? 'redistribuir plantões' : 'substituir'}</button>
       </div>
     </div>
   `;
@@ -307,9 +309,15 @@ function buildReplaceModal(){
   toSel.addEventListener('change', () => {
     if(toSel.value === '__new__'){
       replaceState.toIsNew = true;
+      replaceState.mode = null;
+      replaceState.to = null;
+    } else if(toSel.value === '__redistribute__'){
+      replaceState.toIsNew = false;
+      replaceState.mode = 'redistribute';
       replaceState.to = null;
     } else {
       replaceState.toIsNew = false;
+      replaceState.mode = null;
       replaceState.to = toSel.value || null;
     }
     buildReplaceModal();
@@ -334,13 +342,46 @@ async function applyReplacement(){
   const box = document.getElementById('replaceBox');
   const from = replaceState.from;
   const to = replaceState.to;
+  const isRedistribute = replaceState.mode === 'redistribute';
   const motivo = box.querySelector('#replaceMotivoInput').value.trim();
-  if(!from || !to || from === to) return;
+  if(!from) return;
+  if(!isRedistribute && (!to || from === to)) return;
 
   const TODAY = getToday();
   const yearOverrides = curOverrides();
   const candidate = { ...yearOverrides };
   let count = 0;
+
+  // Redistribuição: escolhe, para cada plantão em que "from" era titular, quem
+  // da equipe restante está com menos plantões no ano até agora (empate por
+  // menos feriados), simulando o mesmo critério de justiça usado nas trocas
+  // individuais — sem repetir a mesma pessoa que já é backup naquele plantão.
+  let pool = null;
+  let runningTitular = null;
+  let runningFer = null;
+  if(isRedistribute){
+    pool = peopleWithFutureShifts().filter(p => p !== from);
+    if(pool.length === 0){
+      showReplaceError('Não há mais ninguém na equipe para redistribuir os plantões.');
+      return;
+    }
+    const baseCounts = computeCounts();
+    runningTitular = {};
+    runningFer = {};
+    pool.forEach(p => {
+      runningTitular[p] = baseCounts[p]?.titular || 0;
+      runningFer[p] = baseCounts[p]?.titular_fer || 0;
+    });
+  }
+  function pickRedistributed(effBackup, temFeriado){
+    const opts = pool.filter(p => p !== effBackup);
+    const chooseFrom = opts.length ? opts : pool;
+    chooseFrom.sort((a,b) => (runningTitular[a]-runningTitular[b]) || (runningFer[a]-runningFer[b]));
+    const chosen = chooseFrom[0];
+    runningTitular[chosen]++;
+    if(temFeriado) runningFer[chosen]++;
+    return chosen;
+  }
 
   curData().forEach(base => {
     if(new Date(base.domingo+'T00:00:00') < TODAY) return; // já cumprido: mantém como está
@@ -349,13 +390,19 @@ async function applyReplacement(){
     const effBackup = existing ? existing.backup : base.backup;
     if(effTitular !== from && effBackup !== from) return;
 
-    const newTitular = effTitular === from ? to : effTitular;
-    const newBackup = effBackup === from ? to : effBackup;
+    let newTitular = effTitular;
+    let newBackup = effBackup;
+    if(effTitular === from){
+      newTitular = isRedistribute ? pickRedistributed(effBackup, base.tem_feriado) : to;
+    }
+    if(effBackup === from){
+      newBackup = isRedistribute ? null : to;
+    }
 
     candidate[base.sabado] = {
       titular: newTitular,
       backup: newBackup,
-      motivo: motivo || `Substituição de funcionário: ${from} → ${to}`,
+      motivo: motivo || (isRedistribute ? `${from} saiu — plantão redistribuído entre a equipe` : `Substituição de funcionário: ${from} → ${to}`),
       original_titular: existing ? existing.original_titular : base.titular,
       original_backup: existing ? existing.original_backup : base.backup,
       ts: Date.now()
