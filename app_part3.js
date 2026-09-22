@@ -228,7 +228,7 @@ document.getElementById('modalOverlay').addEventListener('click', (e) => {
   if(e.target.id === 'modalOverlay') closeModal();
 });
 
-let replaceState = { from: null, to: null };
+let replaceState = { from: null, to: null, toIsNew: false };
 
 function futureShiftsOf(person){
   const TODAY = getToday();
@@ -249,7 +249,7 @@ function peopleWithFutureShifts(){
 }
 
 function openReplaceModal(){
-  replaceState = { from: null, to: null };
+  replaceState = { from: null, to: null, toIsNew: false };
   document.getElementById('replaceOverlay').classList.add('show');
   buildReplaceModal();
 }
@@ -281,10 +281,10 @@ function buildReplaceModal(){
     <select id="replaceToSelect">
       <option value="">— selecionar —</option>
       ${ALL_PEOPLE.filter(p => p !== replaceState.from).map(p => `<option value="${p}" ${replaceState.to===p?'selected':''}>${p}</option>`).join('')}
-      <option value="__new__">+ pessoa nova...</option>
+      <option value="__new__" ${replaceState.toIsNew ? 'selected' : ''}>+ pessoa nova...</option>
     </select>
-    <div id="replaceNewNameWrap" style="display:none; margin-top:8px;">
-      <input type="text" id="replaceNewNameInput" placeholder="Nome da pessoa">
+    <div id="replaceNewNameWrap" style="display:${replaceState.toIsNew ? 'block' : 'none'}; margin-top:8px;">
+      <input type="text" id="replaceNewNameInput" placeholder="Nome da pessoa" value="${replaceState.toIsNew ? (replaceState.to || '') : ''}">
     </div>
 
     <label class="field-label">Motivo (opcional)</label>
@@ -306,13 +306,17 @@ function buildReplaceModal(){
   const toSel = box.querySelector('#replaceToSelect');
   toSel.addEventListener('change', () => {
     if(toSel.value === '__new__'){
-      box.querySelector('#replaceNewNameWrap').style.display = 'block';
+      replaceState.toIsNew = true;
       replaceState.to = null;
     } else {
+      replaceState.toIsNew = false;
       replaceState.to = toSel.value || null;
-      box.querySelector('#replaceNewNameWrap').style.display = 'none';
     }
     buildReplaceModal();
+    if(replaceState.toIsNew){
+      const input = box.querySelector('#replaceNewNameInput');
+      if(input) input.focus();
+    }
   });
   const newNameInput = box.querySelector('#replaceNewNameInput');
   if(newNameInput){
