@@ -177,6 +177,99 @@
     box-shadow: 0 0 6px rgba(22,163,74,0.6);
   }
 
+  .hero-card{
+    background: linear-gradient(135deg, var(--brand-blue) 0%, var(--brand-blue-dark) 100%);
+    border-radius: var(--radius);
+    padding: 18px 22px;
+    margin-bottom: 20px;
+    color: #fff;
+    box-shadow: 0 8px 24px rgba(3,39,165,0.25);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .hero-card.andamento{
+    background: linear-gradient(135deg, #0D9488 0%, #065f5a 100%);
+    box-shadow: 0 8px 24px rgba(13,148,136,0.3);
+  }
+  .hero-card-left{
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .hero-card-badge{
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    align-self: flex-start;
+    background: rgba(255,255,255,0.16);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 20px;
+    padding: 3px 12px;
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+  }
+  .hero-card-badge .pulse-dot{
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: #6EE7F9;
+    box-shadow: 0 0 8px rgba(110,231,249,0.8);
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+  .hero-card.andamento .hero-card-badge .pulse-dot{
+    background: #4ADE80;
+    box-shadow: 0 0 8px rgba(74,222,128,0.8);
+  }
+  .hero-card-title{
+    font-family: 'Poppins', sans-serif;
+    font-size: 19px;
+    font-weight: 700;
+    margin: 0;
+  }
+  .hero-card-title .role-label{
+    font-size: 11px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.65);
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    margin-right: 6px;
+  }
+  .hero-card-dates{
+    font-size: 12px;
+    color: rgba(255,255,255,0.75);
+  }
+  .hero-card-actions{
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .wa-btn{
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: #25D366;
+    color: #fff;
+    border-radius: 10px;
+    padding: 9px 14px;
+    font-family: 'Inter', sans-serif;
+    font-size: 12.5px;
+    font-weight: 700;
+    text-decoration: none;
+    box-shadow: 0 3px 10px rgba(37,211,102,0.35);
+    transition: transform .12s ease, box-shadow .12s ease;
+  }
+  .wa-btn:hover{ transform: translateY(-1px); box-shadow: 0 5px 14px rgba(37,211,102,0.45); }
+  .wa-btn.backup-btn{
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.35);
+    box-shadow: none;
+  }
+  .wa-btn.backup-btn:hover{ background: rgba(255,255,255,0.24); }
+
   header.hero{
     margin-bottom: 24px;
     display:flex;
@@ -715,6 +808,8 @@
 
   <div class="statusbar" id="statusbar"></div>
   <div class="adminbar" id="adminbar"></div>
+
+  <div class="hero-card" id="heroCard"></div>
 
   <header class="hero">
     <img src="data:image/webp;base64,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" alt="Farma Conde" class="brand-logo">
@@ -2459,12 +2554,73 @@ function logoutAdmin(){
   renderAll();
 }
 
+// ---- Contatos WhatsApp (para o card de plantão ativo) ----
+const PHONE_MAP = {
+  'Estanis': '5512997470211',
+  'Pedro': '5512996856347',
+  'Bruno': '5512996865083',
+  'Vitor': '5512997650203',
+  'Edvaldo': '5512992508714',
+  'Randal': '5512991675417',
+};
+function waLink(name, role){
+  const phone = PHONE_MAP[name];
+  if(!phone) return null;
+  const msg = encodeURIComponent(`Olá, ${name}! Preciso falar sobre o plantão${role ? ' ('+role+')' : ''}.`);
+  return `https://wa.me/${phone}?text=${msg}`;
+}
+function renderHeroCard(){
+  const card = document.getElementById('heroCard');
+  const TODAY = getToday();
+  const data = getEffectiveData();
+
+  const current = data.find(r => {
+    const sab = new Date(r.sabado+'T00:00:00');
+    const dom = new Date(r.domingo+'T00:00:00');
+    return TODAY >= sab && TODAY <= dom;
+  });
+  const rec = current || data
+    .filter(r => new Date(r.sabado+'T00:00:00') >= TODAY)
+    .sort((a,b) => a.sabado.localeCompare(b.sabado))[0];
+
+  if(!rec){
+    card.innerHTML = '';
+    return;
+  }
+
+  const isAndamento = !!current;
+  let statusLabel;
+  if(isAndamento){
+    statusLabel = 'Plantão em andamento';
+  } else {
+    const dias = Math.round((new Date(rec.sabado+'T00:00:00') - TODAY) / 86400000);
+    statusLabel = dias === 0 ? 'Inicia hoje' : dias === 1 ? 'Inicia amanhã' : `Inicia em ${dias}d`;
+  }
+
+  const titularLink = waLink(rec.titular, 'titular');
+  const backupLink = rec.backup ? waLink(rec.backup, 'backup') : null;
+
+  card.innerHTML = `
+    <div class="hero-card-left">
+      <span class="hero-card-badge"><span class="pulse-dot"></span>${statusLabel}</span>
+      <div class="hero-card-title"><span class="role-label">Titular</span>${rec.titular}${rec.backup ? ` <span class="role-label" style="margin-left:10px;">Backup</span>${rec.backup}` : ''}</div>
+      <div class="hero-card-dates">${fmtDateFull(rec.sabado)} – ${fmtDateFull(rec.domingo)}${rec.tem_feriado ? ' · 🔶 tem feriado' : ''}</div>
+    </div>
+    <div class="hero-card-actions">
+      ${titularLink ? `<a class="wa-btn" href="${titularLink}" target="_blank" rel="noopener">📞 ${rec.titular}</a>` : ''}
+      ${backupLink ? `<a class="wa-btn backup-btn" href="${backupLink}" target="_blank" rel="noopener">📞 ${rec.backup}</a>` : ''}
+    </div>
+  `;
+  card.classList.toggle('andamento', isAndamento);
+}
+
 function renderAll(){
   document.title = `Plantão Infra · ${currentYear}`;
   const heroYear = document.getElementById('heroYear');
   if(heroYear) heroYear.textContent = `Plantão ${currentYear}`;
   computeAllPeople();
   renderAdminBar();
+  renderHeroCard();
   renderStatusBar();
   renderKPIs();
   renderCalendarYear();
