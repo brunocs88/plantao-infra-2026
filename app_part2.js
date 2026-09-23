@@ -232,6 +232,27 @@ function extendedCoverageDates(rec){
   return extra;
 }
 
+// Faixa de dias que o plantão realmente cobre: normalmente sábado→domingo,
+// mas estende para a sexta anterior e/ou a segunda seguinte quando cai
+// feriado prolongado (mesma janela usada em extendedCoverageDates). Usado
+// na listagem para mostrar "início/fim" reais, não só sábado/domingo fixos.
+function coverageRange(rec){
+  const sab = new Date(rec.sabado+'T00:00:00');
+  const dom = new Date(rec.domingo+'T00:00:00');
+  const sexta = new Date(sab); sexta.setDate(sab.getDate()-1);
+  const segunda = new Date(dom); segunda.setDate(dom.getDate()+1);
+  const sextaIso = isoLocal(sexta.getFullYear(), sexta.getMonth(), sexta.getDate());
+  const segundaIso = isoLocal(segunda.getFullYear(), segunda.getMonth(), segunda.getDate());
+  const hasFront = (rec.feriados||[]).some(f => f.data === sextaIso);
+  const hasBack = (rec.feriados||[]).some(f => f.data === segundaIso);
+  return {
+    start: hasFront ? sextaIso : rec.sabado,
+    end: hasBack ? segundaIso : rec.domingo,
+    extendedFront: hasFront,
+    extendedBack: hasBack
+  };
+}
+
 function buildDayMap(){
   const map = {};
   getEffectiveData().forEach(rec => {
@@ -420,17 +441,21 @@ function renderTable(){
 
   rows.forEach((rec, i) => {
     const tr = document.createElement('tr');
-    const isPast = new Date(rec.domingo+'T00:00:00') < TODAY;
+    const range = coverageRange(rec);
+    const isPast = new Date(range.end+'T00:00:00') < TODAY;
     const classes = [];
     if(isPast) classes.push('is-past');
     if(rec.sabado === nextKey) classes.push('is-next');
     tr.className = classes.join(' ');
     const color = PERSON_COLOR_HEX[rec.titular] || '#999';
     const ovBadge = rec._override ? ' <span title="trocado" style="color:var(--today)">↔</span>' : '';
+    const extIcon = ' <span class="ext-badge" title="feriado prolongado — mesma dupla">📅</span>';
+    const startCell = fmtDateFull(range.start) + (range.extendedFront ? extIcon : '');
+    const endCell = fmtDateFull(range.end) + (range.extendedBack ? extIcon : '');
     tr.innerHTML = `
       <td class="muted">${rec.sabado === nextKey ? '▶' : i+1}</td>
-      <td>${fmtDateFull(rec.sabado)}</td>
-      <td>${fmtDateFull(rec.domingo)}</td>
+      <td>${startCell}</td>
+      <td>${endCell}</td>
       <td><span class="tag-person"><span class="sw" style="background:${color}"></span>${rec.titular}</span>${ovBadge}</td>
       <td>${rec.backup || '<span class="muted">—</span>'}</td>
       <td>${rec.tem_feriado ? `<span class="fer-pill">${rec.feriados.map(fmtHolName).join(', ')}</span>` : '<span class="muted">—</span>'}</td>
