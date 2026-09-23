@@ -1,4 +1,3 @@
-
 function renderPersonFilter(){
   const sel = document.getElementById('personFilter');
   const names = [...new Set([...ALL_PEOPLE, ...getEffectiveData().flatMap(r => [r.titular, r.backup]).filter(Boolean)])];
@@ -22,11 +21,16 @@ function suggestReplacements(rec, role){
   const other = role === 'titular' ? rec.backup : rec.titular;
 
   const recommended = [];
-  if(role === 'titular' && rec.backup){
+  // Só recomenda "promover" o backup a titular se essa pessoa puder ser
+  // titular — um assistente (Edvaldo, Randal) nunca assume o plantão sozinho.
+  if(role === 'titular' && rec.backup && podeSerTitular(rec.backup)){
     recommended.push(rec.backup);
   }
 
-  const pool = ALL_PEOPLE.filter(p => p !== absent && p !== other && !recommended.includes(p));
+  const pool = ALL_PEOPLE.filter(p =>
+    p !== absent && p !== other && !recommended.includes(p) &&
+    (role !== 'titular' || podeSerTitular(p))
+  );
   const ranked = pool.slice().sort((a,b) => {
     const ca = counts[a]?.titular || 0, cb = counts[b]?.titular || 0;
     if(ca !== cb) return ca - cb;
@@ -82,6 +86,11 @@ function buildModal(){
       ${rec._override.motivo ? `Motivo: ${rec._override.motivo}.` : ''}
     </div>` : '';
 
+  const anyPersonOptions = ALL_PEOPLE.filter(p =>
+    p !== currentPerson && p !== (role==='titular'?rec.backup:rec.titular) &&
+    (role !== 'titular' || podeSerTitular(p))
+  );
+
   box.innerHTML = `
     <h3>${fmtDateFull(rec.sabado)} – ${fmtDateFull(rec.domingo)}</h3>
     <div class="modal-sub">Titular atual: <b style="color:${PERSON_COLOR_HEX[rec.titular]||'#fff'}">${rec.titular}</b>${rec.backup ? ` · Backup atual: <b>${rec.backup}</b>` : ' · sem backup neste plantão'}</div>
@@ -102,9 +111,10 @@ function buildModal(){
     <label class="field-label">Ou escolha qualquer pessoa (use esta opção para incluir um plantão extra)</label>
     <select id="anyPersonSelect">
       <option value="">— selecionar —</option>
-      ${ALL_PEOPLE.filter(p=>p!==currentPerson && p!==(role==='titular'?rec.backup:rec.titular)).map(p => `<option value="${p}" ${modalState.chosen===p?'selected':''}>${p}</option>`).join('')}
+      ${anyPersonOptions.map(p => `<option value="${p}" ${modalState.chosen===p?'selected':''}>${p}</option>`).join('')}
       <option value="__new__">+ pessoa nova...</option>
     </select>
+    ${role === 'titular' ? `<div class="hint">Assistentes (Edvaldo, Randal) não aparecem aqui — eles só cobrem como backup, nunca sozinhos.</div>` : ''}
     <div id="newNameWrap" style="display:none; margin-top:8px;">
       <input type="text" id="newNameInput" placeholder="Nome da pessoa">
     </div>
@@ -264,6 +274,9 @@ function buildReplaceModal(){
   const box = document.getElementById('replaceBox');
   const candidates = peopleWithFutureShifts();
   const affected = replaceState.from ? futureShiftsOf(replaceState.from) : [];
+  // Se quem sai tem plantão como titular, quem assume também precisa poder
+  // ser titular — assistentes (Edvaldo, Randal) ficam de fora da lista.
+  const fromIsTitular = affected.some(r => r.titular === replaceState.from);
 
   box.innerHTML = `
     <h3>Substituir funcionário</h3>
@@ -280,14 +293,15 @@ function buildReplaceModal(){
     <label class="field-label" style="margin-top:12px;">Novo funcionário</label>
     <select id="replaceToSelect">
       <option value="">— selecionar —</option>
-      ${ALL_PEOPLE.filter(p => p !== replaceState.from).map(p => `<option value="${p}" ${replaceState.to===p?'selected':''}>${p}</option>`).join('')}
+      ${ALL_PEOPLE.filter(p => p !== replaceState.from && (!fromIsTitular || podeSerTitular(p))).map(p => `<option value="${p}" ${replaceState.to===p?'selected':''}>${p}</option>`).join('')}
       <option value="__new__" ${replaceState.toIsNew ? 'selected' : ''}>+ pessoa nova...</option>
       <option value="__redistribute__" ${replaceState.mode==='redistribute' ? 'selected' : ''}>— não contratar (redistribuir entre a equipe) —</option>
     </select>
+    ${fromIsTitular ? `<div class="hint">${replaceState.from} é titular — assistentes (Edvaldo, Randal) não aparecem aqui, pois não assumem plantão sozinhos. Escolha outro titular, cadastre uma pessoa nova, ou redistribua entre a equipe.</div>` : ''}
     <div id="replaceNewNameWrap" style="display:${replaceState.toIsNew ? 'block' : 'none'}; margin-top:8px;">
       <input type="text" id="replaceNewNameInput" placeholder="Nome da pessoa" value="${replaceState.toIsNew ? (replaceState.to || '') : ''}">
     </div>
-    ${replaceState.mode==='redistribute' ? `<div class="modal-sub" style="margin-top:8px;">Os plantões como titular serão redistribuídos entre o restante da equipe, dando preferência a quem tem menos plantões no ano. Plantões em que ${replaceState.from} era só backup ficam sem backup.</div>` : ''}
+    ${replaceState.mode==='redistribute' ? `<div class="modal-sub" style="margin-top:8px;">Os plantões como titular serão redistribuídos entre o restante dos titulares (assistentes não entram nessa conta), dando preferência a quem tem menos plantões no ano — ou seja, os titulares que ficarem vão precisar cobrir mais finais de semana. Plantões em que ${replaceState.from} era só backup ficam sem backup.</div>` : ''}
 
     <label class="field-label">Motivo (opcional)</label>
     <input type="text" id="replaceMotivoInput" placeholder="ex: desligamento, saída da empresa">
@@ -356,13 +370,15 @@ async function applyReplacement(){
   // da equipe restante está com menos plantões no ano até agora (empate por
   // menos feriados), simulando o mesmo critério de justiça usado nas trocas
   // individuais — sem repetir a mesma pessoa que já é backup naquele plantão.
+  // Assistentes (Edvaldo, Randal) ficam fora do sorteio: eles não assumem
+  // plantão sozinhos, então essas vagas só circulam entre os titulares.
   let pool = null;
   let runningTitular = null;
   let runningFer = null;
   if(isRedistribute){
-    pool = peopleWithFutureShifts().filter(p => p !== from);
+    pool = peopleWithFutureShifts().filter(p => p !== from && podeSerTitular(p));
     if(pool.length === 0){
-      showReplaceError('Não há mais ninguém na equipe para redistribuir os plantões.');
+      showReplaceError('Não há mais nenhum titular disponível para redistribuir os plantões.');
       return;
     }
     const baseCounts = computeCounts();
@@ -402,7 +418,7 @@ async function applyReplacement(){
     candidate[base.sabado] = {
       titular: newTitular,
       backup: newBackup,
-      motivo: motivo || (isRedistribute ? `${from} saiu — plantão redistribuído entre a equipe` : `Substituição de funcionário: ${from} → ${to}`),
+      motivo: motivo || (isRedistribute ? `${from} saiu — plantão redistribuído entre os titulares` : `Substituição de funcionário: ${from} → ${to}`),
       original_titular: existing ? existing.original_titular : base.titular,
       original_backup: existing ? existing.original_backup : base.backup,
       ts: Date.now()
@@ -423,6 +439,9 @@ async function applyReplacement(){
   fireConfetti();
   closeReplaceModal();
   renderAll();
+  // Confirmação explícita da quantidade — evita dúvida sobre se foi só 1
+  // plantão ou todos os futuros que mudaram de mão.
+  alert(`✅ ${count} plantão(ões) futuro(s) de ${from} foram ${isRedistribute ? 'redistribuídos entre os titulares' : `transferidos para ${to}`}.`);
 }
 
 function showReplaceError(msg){
