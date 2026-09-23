@@ -1,4 +1,3 @@
-
 function showGenerateError(msg){
   const box = document.getElementById('generateBox');
   let el = box.querySelector('.modal-error');
@@ -102,6 +101,10 @@ function buildSwapPeopleModal(){
   if(a && b && a !== b){
     affected = curData().filter(r => [r.titular, r.backup].includes(a) || [r.titular, r.backup].includes(b)).length;
   }
+  // Um assistente (Edvaldo, Randal) nunca pode virar titular — se as duas
+  // pessoas escolhidas não forem "do mesmo tipo" (ambas titulares ou ambas
+  // assistentes), a troca herdaria plantões sozinhos para um assistente.
+  const invalidSwap = !!(a && b && a !== b && (podeSerTitular(a) !== podeSerTitular(b)));
   const opts = (selected) => ALL_PEOPLE.map(p => `<option value="${p}" ${selected===p?'selected':''}>${p}</option>`).join('');
 
   box.innerHTML = `
@@ -115,12 +118,13 @@ function buildSwapPeopleModal(){
     <select id="swapBSelect"><option value="">— selecionar —</option>${opts(b)}</select>
 
     ${a && b && a !== b ? `<div class="modal-sub" style="margin-top:10px;"><b>${affected}</b> plantão(ões) serão afetados.</div>` : ''}
+    ${invalidSwap ? `<div class="modal-sub" style="margin-top:6px; color:var(--holiday);">⚠ ${ASSISTENTES.includes(a) ? a : b} é assistente (só backup) e não pode assumir plantão como titular — essa troca não é permitida.</div>` : ''}
 
     <div class="modal-actions">
       <div></div>
       <div style="display:flex; gap:8px;">
         <button class="btn btn-ghost" id="swapCancelBtn">cancelar</button>
-        <button class="btn btn-primary" id="swapConfirmBtn" ${(!a || !b || a===b || affected===0) ? 'disabled' : ''}>trocar</button>
+        <button class="btn btn-primary" id="swapConfirmBtn" ${(!a || !b || a===b || affected===0 || invalidSwap) ? 'disabled' : ''}>trocar</button>
       </div>
     </div>
   `;
