@@ -1,4 +1,3 @@
-
 // ---- Importação de planilha (admin) ----
 // Replica o formato original da aba "PLANTÃO <ano>": um cabeçalho com o nome
 // do mês (ex: "Janeiro"), seguido de linhas "DD e DD: Titular (+ Backup)".
@@ -319,14 +318,25 @@ function generateYearSchedule(year, titulares, backups){
   const n = saturdays.length;
   const titularSeq = shuffledCycleFill(titulares, n, rng);
 
+  // Backup: no máximo 1 plantão de backup por pessoa por mês — regra da
+  // equipe (assistentes, ex. Edvaldo/Randal, nunca dobram no mesmo mês).
+  // Por isso a escolha é feita mês a mês, nunca com o pool do ano inteiro.
   let backupSeq = new Array(n).fill(null);
   if(backups && backups.length > 0){
     const refBackupRatio = DATA_2026.filter(r => r.backup).length / DATA_2026.length;
-    const backupSlots = Math.round(n * refBackupRatio);
-    const pool = [];
-    for(let i=0;i<backupSlots;i++) pool.push(backups[i % backups.length]);
-    while(pool.length < n) pool.push(null);
-    backupSeq = shuffle(pool, rng);
+    const byMonth = {};
+    saturdays.forEach((sat, idx) => {
+      const mk = sat.getMonth();
+      (byMonth[mk] = byMonth[mk] || []).push(idx);
+    });
+    Object.values(byMonth).forEach(idxs => {
+      const wantedThisMonth = Math.min(Math.round(idxs.length * refBackupRatio), backups.length);
+      const shuffledIdx = shuffle(idxs, rng);
+      const shuffledBackups = shuffle(backups, rng);
+      for(let i=0; i<wantedThisMonth; i++){
+        backupSeq[shuffledIdx[i]] = shuffledBackups[i];
+      }
+    });
   }
 
   const holidays = computeBrazilianHolidays(year);
