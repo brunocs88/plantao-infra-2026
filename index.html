@@ -39,7 +39,7 @@
 
   <section class="rack-section">
     <h2>Calendário do ano</h2>
-    <p class="desc">Cada mês como no seu calendário. Sábado e domingo coloridos = plantão daquela pessoa. Anel dourado = dia de feriado (pode cair na sexta, sábado, domingo ou segunda do plantão). Clique num nome acima para destacar; passe o mouse num dia para ver detalhes.</p>
+    <p class="desc">Cada mês como no seu calendário. Sábado e domingo coloridos = plantão daquela pessoa. Dias com listras = feriado prolongado (sexta/segunda cobertos pela mesma dupla). Anel dourado = dia de feriado (pode cair na sexta, sábado, domingo ou segunda do plantão). Clique num nome acima para destacar; passe o mouse num dia para ver detalhes.</p>
     <div class="calendar-year" id="calendarYear"></div>
     <div class="rack-legend" id="rackLegend"></div>
   </section>
@@ -57,8 +57,8 @@
       <thead>
         <tr>
           <th>#</th>
-          <th>Sábado</th>
-          <th>Domingo</th>
+          <th>Início</th>
+          <th>Fim</th>
           <th>Titular</th>
           <th>Backup</th>
           <th>Feriado</th>
@@ -75,7 +75,7 @@
   </section>
 
   <footer class="notes">
-    <p><b>Como os feriados são contados:</b> para cada plantão (sábado + domingo), verificamos se algum feriado nacional, ponto facultativo, feriado estadual (SP) ou municipal (Jacareí) cai na sexta-feira anterior, no próprio sábado/domingo, ou na segunda-feira seguinte. Se você quiser uma janela diferente (por ex. a semana inteira), me avisa que eu recalculo.</p>
+    <p><b>Como os feriados são contados:</b> para cada plantão (sábado + domingo), verificamos se algum feriado nacional, ponto facultativo, feriado estadual (SP) ou municipal (Jacareí) cai na sexta-feira anterior, no próprio sábado/domingo, ou na segunda-feira seguinte. Quando isso acontece, a mesma dupla titular/backup cobre também esse dia extra ("Início"/"Fim" na listagem passam a refletir a sexta ou a segunda, não só sábado/domingo). Se você quiser uma janela diferente (por ex. a semana inteira), me avisa que eu recalculo.</p>
     <p><b>Feriados considerados:</b> Confraternização Universal, Carnaval (seg+ter, facultativo), Quarta-feira de Cinzas (facultativo), Sexta-feira Santa, Tiradentes, Dia do Trabalho, Corpus Christi (facultativo), Revolução Constitucionalista (SP, 9/jul), Independência, N. Sra. Aparecida, Finados, Proclamação da República, Consciência Negra, Natal, Dia da Padroeira de Jacareí (8/dez), Dia de São José · Padroeiro de São José dos Campos (19/mar) e Aniversário de São José dos Campos (27/jul).</p>
     <p><b>Dados:</b> extraídos da aba "PLANTÃO 2026" da planilha enviada. Se a escala de um ano mudar, o admin pode logar e usar "📤 importar planilha" para substituir aquele ano por completo — não precisa me pedir para atualizar o painel. O seletor de ano aparece na barra superior assim que houver mais de um ano cadastrado.</p>
   </footer>
