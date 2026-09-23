@@ -796,6 +796,7 @@
   .day-cell.plantao.plantao-extended{
     background-image: repeating-linear-gradient(135deg, var(--c), var(--c) 4px, rgba(255,255,255,0.4) 4px, rgba(255,255,255,0.4) 8px);
   }
+  .ext-badge{ font-size: 10px; cursor: help; }
   .rack-legend .stripe-sample{
     width:10px; height:10px; border-radius:3px;
     background-image: repeating-linear-gradient(135deg, var(--brand-orange), var(--brand-orange) 3px, rgba(255,255,255,0.6) 3px, rgba(255,255,255,0.6) 6px);
