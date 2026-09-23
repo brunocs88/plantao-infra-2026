@@ -1,4 +1,3 @@
-
 // Salva as trocas de UM ano, preservando as dos demais anos.
 async function apiSaveOverridesForCurrentYear(newYearOverrides){
   const candidate = { ...overridesByYear, [currentYear]: newYearOverrides };
@@ -150,7 +149,10 @@ function computeTrophies(counts, titularNames){
 function renderKPIs(){
   const counts = computeCounts();
   const allNames = new Set([...TITULARES, ...Object.keys(counts)]);
-  const titularNames = [...allNames].filter(n => TITULARES.includes(n) || (counts[n] && counts[n].titular > 0));
+  // Só aparece card de titular para quem de fato tem (pelo menos) um plantão
+  // como titular NESTE ano — evita que alguém desligado, sem nenhum plantão
+  // no ano corrente, continue "preso" no topo do painel.
+  const titularNames = [...allNames].filter(n => counts[n] && counts[n].titular > 0);
   const trophies = computeTrophies(counts, titularNames);
   const kpis = document.getElementById('kpis');
   kpis.innerHTML = '';
@@ -210,17 +212,35 @@ function renderComparativeChart(counts, titularNames){
   }).join('');
 }
 
+function pad(n){ return String(n).padStart(2,'0'); }
+function isoLocal(y,m,d){ return `${y}-${pad(m+1)}-${pad(d)}`; }
+
+// Datas de sexta anterior/segunda seguinte a um plantão, SÓ quando essa data
+// específica coincide com um feriado que já entrou em rec.feriados. É o que
+// materializa "feriado prolongado": mesma dupla titular/backup do fim de
+// semana cobre também a sexta ou a segunda quando ela vira ponto de plantão.
+function extendedCoverageDates(rec){
+  const sab = new Date(rec.sabado+'T00:00:00');
+  const dom = new Date(rec.domingo+'T00:00:00');
+  const sexta = new Date(sab); sexta.setDate(sab.getDate()-1);
+  const segunda = new Date(dom); segunda.setDate(dom.getDate()+1);
+  const sextaIso = isoLocal(sexta.getFullYear(), sexta.getMonth(), sexta.getDate());
+  const segundaIso = isoLocal(segunda.getFullYear(), segunda.getMonth(), segunda.getDate());
+  const extra = [];
+  if((rec.feriados||[]).some(f => f.data === sextaIso)) extra.push(sextaIso);
+  if((rec.feriados||[]).some(f => f.data === segundaIso)) extra.push(segundaIso);
+  return extra;
+}
+
 function buildDayMap(){
   const map = {};
   getEffectiveData().forEach(rec => {
     map[rec.sabado] = rec;
     map[rec.domingo] = rec;
+    extendedCoverageDates(rec).forEach(iso => { map[iso] = rec; });
   });
   return map;
 }
-
-function pad(n){ return String(n).padStart(2,'0'); }
-function isoLocal(y,m,d){ return `${y}-${pad(m+1)}-${pad(d)}`; }
 
 function getNextShiftKey(){
   const TODAY = getToday();
@@ -277,6 +297,8 @@ function renderCalendarYear(){
 
       if(rec){
         cell.classList.add('plantao');
+        const isExtended = iso !== rec.sabado && iso !== rec.domingo;
+        if(isExtended) cell.classList.add('plantao-extended');
         cell.style.setProperty('--c', PERSON_COLOR_HEX[rec.titular] || '#888');
         const isPast = new Date(rec.domingo+'T00:00:00') < TODAY;
         if(isPast) cell.classList.add('past');
@@ -335,6 +357,7 @@ function renderCalendarYear(){
     <div class="item"><span class="diamond"></span>feriado</div>
     <div class="item"><span class="diamond dashed"></span>ponto facultativo</div>
     <div class="item"><span class="ring-sample"></span>próximo plantão</div>
+    <div class="item"><span class="stripe-sample"></span>feriado prolongado (sexta/segunda, mesma dupla)</div>
   `;
 }
 
@@ -345,14 +368,19 @@ function fmtHolName(f){
 function showTooltip(e, rec, iso, hol){
   const tt = document.getElementById('tooltip');
   if(rec){
+    const isExtended = iso !== rec.sabado && iso !== rec.domingo;
     const ferHtml = rec.tem_feriado
       ? `<div class="t-fer">🔶 ${rec.feriados.map(fmtHolName).join(', ')}</div>`
+      : '';
+    const extHtml = isExtended
+      ? `<div class="t-line" style="color:var(--next)">📅 feriado prolongado — mesma dupla do fim de semana</div>`
       : '';
     const ovHtml = rec._override
       ? `<div class="t-line" style="color:var(--today)">↔ trocado (era ${rec._override.original_titular}${rec._override.original_backup? ' + '+rec._override.original_backup:''})${rec._override.motivo ? ' · '+rec._override.motivo : ''}</div>`
       : '';
     tt.innerHTML = `
       <div class="t-title">${fmtDateFull(rec.sabado)} – ${fmtDateFull(rec.domingo)}</div>
+      ${extHtml}
       <div class="t-line">Titular: <b style="color:${PERSON_COLOR_HEX[rec.titular]||'#fff'}">${rec.titular}</b></div>
       ${rec.backup ? `<div class="t-line">Backup: ${rec.backup}</div>` : ''}
       ${ferHtml}
