@@ -29,7 +29,8 @@ function suggestReplacements(rec, role){
 
   const pool = ALL_PEOPLE.filter(p =>
     p !== absent && p !== other && !recommended.includes(p) &&
-    (role !== 'titular' || podeSerTitular(p))
+    (role !== 'titular' || podeSerTitular(p)) &&
+    (role !== 'backup' || podeSerBackupNesteMes(p, rec.sabado, rec.sabado))
   );
   const ranked = pool.slice().sort((a,b) => {
     const ca = counts[a]?.titular || 0, cb = counts[b]?.titular || 0;
@@ -43,6 +44,21 @@ function suggestReplacements(rec, role){
 function shiftsInMonth(name, iso){
   const mk = monthKey(iso);
   return getEffectiveData().filter(r => r.titular === name && monthKey(r.sabado) === mk).length;
+}
+
+// Quantos plantões como BACKUP essa pessoa já tem no mesmo mês do plantão
+// "iso" (excluindo o próprio plantão em edição, se ele já for dela).
+function backupShiftsInMonth(name, iso, excludeSabado){
+  const mk = monthKey(iso);
+  return getEffectiveData().filter(r => r.backup === name && monthKey(r.sabado) === mk && r.sabado !== excludeSabado).length;
+}
+
+// Assistentes (Edvaldo, Randal) só podem fazer 1 backup por mês cada um —
+// nunca dobrar no mesmo mês. Titulares que eventualmente façam backup não
+// têm esse teto.
+function podeSerBackupNesteMes(name, iso, excludeSabado){
+  if(podeSerTitular(name)) return true; // regra é só para assistentes
+  return backupShiftsInMonth(name, iso, excludeSabado) === 0;
 }
 
 function openSwapModal(shiftKey){
@@ -88,7 +104,8 @@ function buildModal(){
 
   const anyPersonOptions = ALL_PEOPLE.filter(p =>
     p !== currentPerson && p !== (role==='titular'?rec.backup:rec.titular) &&
-    (role !== 'titular' || podeSerTitular(p))
+    (role !== 'titular' || podeSerTitular(p)) &&
+    (role !== 'backup' || podeSerBackupNesteMes(p, rec.sabado, rec.sabado))
   );
 
   box.innerHTML = `
@@ -115,6 +132,7 @@ function buildModal(){
       <option value="__new__">+ pessoa nova...</option>
     </select>
     ${role === 'titular' ? `<div class="hint">Assistentes (Edvaldo, Randal) não aparecem aqui — eles só cobrem como backup, nunca sozinhos.</div>` : ''}
+    ${role === 'backup' ? `<div class="hint">Edvaldo e Randal que já têm 1 backup neste mês não aparecem aqui — no máximo 1 por mês para cada um.</div>` : ''}
     <div id="newNameWrap" style="display:none; margin-top:8px;">
       <input type="text" id="newNameInput" placeholder="Nome da pessoa">
     </div>
