@@ -137,8 +137,13 @@ function buildModal(){
       <input type="text" id="newNameInput" placeholder="Nome da pessoa">
     </div>
 
-    <label class="field-label">Motivo (opcional)</label>
+    <label class="field-label">Motivo (opcional, uso interno)</label>
     <input type="text" id="motivoInput" placeholder="ex: férias, atestado" value="${rec._override?.motivo || ''}">
+
+    <label style="display:flex; align-items:center; gap:8px; margin-top:10px; font-size:12px; cursor:pointer;">
+      <input type="checkbox" id="silentInput" ${rec._override?.silent ? 'checked' : ''}>
+      Troca discreta — não mostrar indicação de troca no calendário, na tabela nem no histórico (fica só no registro interno, visível aqui no editor)
+    </label>
 
     <div class="modal-actions">
       <div>
@@ -208,6 +213,8 @@ async function applySwap(){
   if(modalState.role === 'titular') newTitular = chosen;
   else newBackup = chosen;
 
+  const silent = !!box.querySelector('#silentInput')?.checked;
+
   const candidate = { ...curOverrides() };
   candidate[modalState.key] = {
     titular: newTitular,
@@ -215,6 +222,7 @@ async function applySwap(){
     motivo: motivo || (existing ? existing.motivo : ''),
     original_titular: existing ? existing.original_titular : base.titular,
     original_backup: existing ? existing.original_backup : base.backup,
+    silent,
     ts: Date.now()
   };
 
@@ -477,7 +485,7 @@ function showReplaceError(msg){
 function renderHistory(){
   const list = document.getElementById('historyList');
   const section = document.getElementById('historySection');
-  const entries = Object.entries(curOverrides()).sort((a,b) => b[1].ts - a[1].ts);
+  const entries = Object.entries(curOverrides()).filter(([,o]) => !o.silent).sort((a,b) => b[1].ts - a[1].ts);
   if(entries.length === 0){
     section.style.display = 'none';
     return;
