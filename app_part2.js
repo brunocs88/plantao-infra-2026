@@ -323,7 +323,7 @@ function renderCalendarYear(){
         cell.style.setProperty('--c', PERSON_COLOR_HEX[rec.titular] || '#888');
         const isPast = new Date(rec.domingo+'T00:00:00') < TODAY;
         if(isPast) cell.classList.add('past');
-        if(rec._override) cell.classList.add('overridden');
+        if(rec._override && !rec._override.silent) cell.classList.add('overridden');
         if(nextKey && rec.sabado === nextKey) cell.classList.add('next-shift');
         if(activePerson && rec.titular !== activePerson && rec.backup !== activePerson){
           cell.classList.add('dim');
@@ -396,7 +396,7 @@ function showTooltip(e, rec, iso, hol){
     const extHtml = isExtended
       ? `<div class="t-line" style="color:var(--next)">📅 feriado prolongado — mesma dupla do fim de semana</div>`
       : '';
-    const ovHtml = rec._override
+    const ovHtml = (rec._override && !rec._override.silent)
       ? `<div class="t-line" style="color:var(--today)">↔ trocado (era ${rec._override.original_titular}${rec._override.original_backup? ' + '+rec._override.original_backup:''})${rec._override.motivo ? ' · '+rec._override.motivo : ''}</div>`
       : '';
     tt.innerHTML = `
@@ -448,7 +448,7 @@ function renderTable(){
     if(rec.sabado === nextKey) classes.push('is-next');
     tr.className = classes.join(' ');
     const color = PERSON_COLOR_HEX[rec.titular] || '#999';
-    const ovBadge = rec._override ? ' <span title="trocado" style="color:var(--today)">↔</span>' : '';
+    const ovBadge = (rec._override && !rec._override.silent) ? ' <span title="trocado" style="color:var(--today)">↔</span>' : '';
     const extIcon = ' <span class="ext-badge" title="feriado prolongado — mesma dupla">📅</span>';
     const startCell = fmtDateFull(range.start) + (range.extendedFront ? extIcon : '');
     const endCell = fmtDateFull(range.end) + (range.extendedBack ? extIcon : '');
