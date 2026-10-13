@@ -1,0 +1,12 @@
+{
+  "name": "wifi-portal",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Captive portal Wi-Fi com consentimento LGPD, registro de conexão (Marco Civil) e relatórios",
+  "engines": { "node": ">=22.13" },
+  "scripts": {
+    "start": "node --env-file-if-exists=.env --disable-warning=ExperimentalWarning src/server.js",
+    "test": "node --disable-warning=ExperimentalWarning --test test/*.test.js"
+  }
+}
