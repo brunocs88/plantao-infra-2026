@@ -9,3 +9,4 @@ netlify.toml
 netlify/**
 api/**
 .assetsignore
+monitor-worker.js

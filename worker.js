@@ -1,4 +1,5 @@
 import { Redis } from '@upstash/redis';
+import { getOverview, saveTargets, runProbes } from './monitor-worker.js';
 
 function getRedis(env) {
   return new Redis({ url: env.KV_REST_API_URL, token: env.KV_REST_API_TOKEN });
@@ -59,11 +60,30 @@ async function handleOverrides(request, env) {
   return new Response('Method not allowed', { status: 405 });
 }
 
+async function handleMonitor(request, env) {
+  const redis = getRedis(env);
+  if (request.method === 'GET') return Response.json(await getOverview(redis));
+  if (request.method === 'POST') {
+    const auth = checkAdmin(request, env);
+    if (!auth.ok) return Response.json({ ok: false, error: auth.error }, { status: auth.status });
+    const { targets } = await request.json();
+    const r = await saveTargets(redis, targets);
+    if (r.error) return Response.json({ ok: false, error: r.error }, { status: 400 });
+    return Response.json({ ok: true });
+  }
+  return new Response('Method not allowed', { status: 405 });
+}
+
 export default {
+  async scheduled(event, env, ctx) {
+    ctx.waitUntil(runProbes(getRedis(env)));
+  },
+
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     try {
       if (url.pathname === '/api/schedule') return await handleSchedule(request, env);
+      if (url.pathname === '/api/monitor') return await handleMonitor(request, env);
       if (url.pathname === '/api/overrides') return await handleOverrides(request, env);
     } catch (err) {
       return Response.json({ ok: false, error: 'Erro interno: ' + (err instanceof Error ? err.message : String(err)) }, { status: 500 });

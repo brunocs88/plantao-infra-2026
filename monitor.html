@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Monitor de IPs · Infra</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="monitor.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <div class="eyebrow">Infra · Monitoramento</div>
+      <h1>Status dos IPs públicos</h1>
+    </div>
+    <div class="meta"><span id="updated">carregando…</span><button id="editBtn" class="ghost">Gerenciar alvos</button></div>
+  </header>
+
+  <div id="banner" class="banner"></div>
+  <section id="grid" class="grid"></section>
+
+  <section id="editor" class="editor" hidden>
+    <h2>Alvos monitorados</h2>
+    <p class="desc">Um por linha: <code>nome, ip-ou-host, porta</code>. Somente IPs públicos. Máx. 30.</p>
+    <textarea id="targetsText" rows="8" spellcheck="false"></textarea>
+    <div class="row">
+      <input id="admUser" placeholder="Usuário admin" autocomplete="username">
+      <input id="admKey" type="password" placeholder="Senha admin" autocomplete="current-password">
+      <button id="saveBtn">Salvar</button>
+      <span id="saveMsg"></span>
+    </div>
+  </section>
+
+  <p class="foot">Testes de conexão TCP a cada 1 min, feitos a partir da rede da Cloudflare. "Instável" = falha em algum dos últimos 5 testes; "Fora do ar" = todos falharam.</p>
+</div>
+<script src="monitor-app.js"></script>
+</body>
+</html>
