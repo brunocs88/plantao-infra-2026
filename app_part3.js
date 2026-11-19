@@ -43,7 +43,7 @@ function suggestReplacements(rec, role){
 
 function shiftsInMonth(name, iso){
   const mk = monthKey(iso);
-  return getEffectiveData().filter(r => r.titular === name && monthKey(r.sabado) === mk).length;
+  return getEffectiveData().filter(r => (r.titular === name || (r.backup === name && podeSerTitular(name))) && monthKey(r.sabado) === mk).length;
 }
 
 // Quantos plantões como BACKUP essa pessoa já tem no mesmo mês do plantão
@@ -115,8 +115,8 @@ function buildModal(){
     ${overrideBox}
 
     <div class="role-toggle">
-      <button data-role="titular" class="${role==='titular'?'active':''}">quem sai é o titular</button>
-      <button data-role="backup" class="${role==='backup'?'active':''}" ${!rec.backup ? 'disabled style="opacity:.4;cursor:not-allowed;"' : ''}>quem sai é o backup</button>
+      <button data-role="titular" class="${role==='titular'?'active':''}">quem sai é o plantonista</button>
+      <button data-role="backup" class="${role==='backup'?'active':''}" ${!rec.backup ? 'disabled style="opacity:.4;cursor:not-allowed;"' : ''}>quem sai é a dupla</button>
     </div>
 
     <label class="field-label">Sugestão (sem sobrecarregar ninguém)</label>
@@ -131,8 +131,8 @@ function buildModal(){
       ${anyPersonOptions.map(p => `<option value="${p}" ${modalState.chosen===p?'selected':''}>${p}</option>`).join('')}
       <option value="__new__">+ pessoa nova...</option>
     </select>
-    ${role === 'titular' ? `<div class="hint">Assistentes (Edvaldo, Randal) não aparecem aqui — eles só cobrem como backup, nunca sozinhos.</div>` : ''}
-    ${role === 'backup' ? `<div class="hint">Edvaldo e Randal que já têm 1 backup neste mês não aparecem aqui — no máximo 1 por mês para cada um.</div>` : ''}
+    ${role === 'titular' && ASSISTENTES.length ? `<div class="hint">Assistentes (Edvaldo, Randal) não aparecem aqui — eles só cobrem como backup, nunca sozinhos.</div>` : ''}
+    ${role === 'backup' && ASSISTENTES.length ? `<div class="hint">Edvaldo e Randal que já têm 1 backup neste mês não aparecem aqui — no máximo 1 por mês para cada um.</div>` : ''}
     <div id="newNameWrap" style="display:none; margin-top:8px;">
       <input type="text" id="newNameInput" placeholder="Nome da pessoa">
     </div>
@@ -323,7 +323,7 @@ function buildReplaceModal(){
       <option value="__new__" ${replaceState.toIsNew ? 'selected' : ''}>+ pessoa nova...</option>
       <option value="__redistribute__" ${replaceState.mode==='redistribute' ? 'selected' : ''}>— não contratar (redistribuir entre a equipe) —</option>
     </select>
-    ${fromIsTitular ? `<div class="hint">${replaceState.from} é titular — assistentes (Edvaldo, Randal) não aparecem aqui, pois não assumem plantão sozinhos. Escolha outro titular, cadastre uma pessoa nova, ou redistribua entre a equipe.</div>` : ''}
+    ${fromIsTitular && ASSISTENTES.length ? `<div class="hint">${replaceState.from} é titular — assistentes (Edvaldo, Randal) não aparecem aqui, pois não assumem plantão sozinhos. Escolha outro titular, cadastre uma pessoa nova, ou redistribua entre a equipe.</div>` : ''}
     <div id="replaceNewNameWrap" style="display:${replaceState.toIsNew ? 'block' : 'none'}; margin-top:8px;">
       <input type="text" id="replaceNewNameInput" placeholder="Nome da pessoa" value="${replaceState.toIsNew ? (replaceState.to || '') : ''}">
     </div>

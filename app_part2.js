@@ -110,6 +110,10 @@ function tickClock(){
 }
 setInterval(tickClock, 1000);
 
+// Dupla = plantão com dois plantonistas iguais (o 2º nome não é assistente).
+// Assistentes (Edvaldo, Randal) continuam como backup, fora da dupla.
+function isDupla(rec){ return !!(rec && rec.backup && podeSerTitular(rec.backup)); }
+
 function computeCounts(){
   const counts = {};
   getEffectiveData().forEach(rec => {
@@ -118,8 +122,14 @@ function computeCounts(){
     if(rec.tem_feriado) counts[rec.titular].titular_fer++;
     if(rec.backup){
       if(!counts[rec.backup]) counts[rec.backup] = {titular:0, titular_fer:0, backup:0, backup_fer:0};
-      counts[rec.backup].backup++;
-      if(rec.tem_feriado) counts[rec.backup].backup_fer++;
+      if(isDupla(rec)){
+        // Dupla: o segundo nome é plantonista de igual para igual — conta como plantão normal.
+        counts[rec.backup].titular++;
+        if(rec.tem_feriado) counts[rec.backup].titular_fer++;
+      } else {
+        counts[rec.backup].backup++;
+        if(rec.tem_feriado) counts[rec.backup].backup_fer++;
+      }
     }
   });
   return counts;
@@ -331,7 +341,12 @@ function renderCalendarYear(){
         if(onlyHoliday && !rec.tem_feriado){
           cell.classList.add('dim');
         }
-        if(rec.backup){
+        if(isDupla(rec)){
+          const c1 = PERSON_COLOR_HEX[rec.titular] || '#888';
+          const c2 = PERSON_COLOR_HEX[rec.backup] || '#888';
+          cell.style.background = `linear-gradient(135deg, ${c1} 50%, ${c2} 50%)`;
+        }
+        if(rec.backup && !isDupla(rec)){
           const bd = document.createElement('div');
           bd.className = 'backup-dot';
           cell.appendChild(bd);
@@ -374,7 +389,7 @@ function renderCalendarYear(){
   legend.innerHTML = Object.keys(PERSON_COLOR_HEX).map(name =>
     `<div class="item"><span class="sw" style="background:${PERSON_COLOR_HEX[name]}"></span>${name}</div>`
   ).join('') + `
-    <div class="item"><span class="dot"></span>tem backup</div>
+    <div class="item"><span class="sw" style="background:linear-gradient(135deg,#0D9488 50%,#2563EB 50%)"></span>dupla (duas cores)</div>
     <div class="item"><span class="diamond"></span>feriado</div>
     <div class="item"><span class="diamond dashed"></span>ponto facultativo</div>
     <div class="item"><span class="ring-sample"></span>próximo plantão</div>
@@ -402,8 +417,8 @@ function showTooltip(e, rec, iso, hol){
     tt.innerHTML = `
       <div class="t-title">${fmtDateFull(rec.sabado)} – ${fmtDateFull(rec.domingo)}</div>
       ${extHtml}
-      <div class="t-line">Titular: <b style="color:${PERSON_COLOR_HEX[rec.titular]||'#fff'}">${rec.titular}</b></div>
-      ${rec.backup ? `<div class="t-line">Backup: ${rec.backup}</div>` : ''}
+      <div class="t-line">${isDupla(rec) ? 'Plantonista' : 'Titular'}: <b style="color:${PERSON_COLOR_HEX[rec.titular]||'#fff'}">${rec.titular}</b></div>
+      ${rec.backup ? `<div class="t-line">${isDupla(rec) ? 'Dupla' : 'Backup'}: ${isDupla(rec) ? `<b style="color:${PERSON_COLOR_HEX[rec.backup]||'#fff'}">${rec.backup}</b>` : rec.backup}</div>` : ''}
       ${ferHtml}
       ${ovHtml}
     `;
@@ -457,7 +472,7 @@ function renderTable(){
       <td>${startCell}</td>
       <td>${endCell}</td>
       <td><span class="tag-person"><span class="sw" style="background:${color}"></span>${rec.titular}</span>${ovBadge}</td>
-      <td>${rec.backup || '<span class="muted">—</span>'}</td>
+      <td>${rec.backup ? (isDupla(rec) ? `<span class="tag-person"><span class="sw" style="background:${PERSON_COLOR_HEX[rec.backup]||'#999'}"></span>${rec.backup}</span>` : `${rec.backup} <span class="muted" style="font-size:10px;">(backup)</span>`) : '<span class="muted">—</span>'}</td>
       <td>${rec.tem_feriado ? `<span class="fer-pill">${rec.feriados.map(fmtHolName).join(', ')}</span>` : '<span class="muted">—</span>'}</td>
       <td>${isAdmin() ? `<button class="btn btn-ghost" style="padding:4px 8px;" data-key="${rec.sabado}">editar</button>` : ''}</td>
     `;

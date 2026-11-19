@@ -262,7 +262,7 @@ function renderHeroCard(){
   card.innerHTML = `
     <div class="hero-card-left">
       <span class="hero-card-badge"><span class="pulse-dot"></span>${statusLabel}</span>
-      <div class="hero-card-title"><span class="role-label">Titular</span>${rec.titular}${rec.backup ? ` <span class="role-label" style="margin-left:10px;">Backup</span>${rec.backup}` : ''}</div>
+      <div class="hero-card-title"><span class="role-label">${isDupla(rec) ? 'Dupla' : 'Titular'}</span>${rec.titular}${rec.backup ? ` ${isDupla(rec) ? '<span class="role-label" style="margin-left:6px;">+</span>' : '<span class="role-label" style="margin-left:10px;">Backup</span>'}${rec.backup}` : ''}</div>
       <div class="hero-card-dates">${fmtDateFull(rec.sabado)} – ${fmtDateFull(rec.domingo)}${rec.tem_feriado ? ' · 🔶 tem feriado' : ''}</div>
     </div>
     <div class="hero-card-actions">
