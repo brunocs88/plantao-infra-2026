@@ -40,6 +40,7 @@
   <section class="rack-section">
     <h2>Calendário do ano</h2>
     <p class="desc">Cada mês como no seu calendário. Sábado e domingo coloridos = plantão daquela pessoa. Dias com listras = feriado prolongado (sexta/segunda cobertos pela mesma dupla). Anel dourado = dia de feriado (pode cair na sexta, sábado, domingo ou segunda do plantão). Clique num nome acima para destacar; passe o mouse num dia para ver detalhes.</p>
+    <div style="margin-bottom:12px;"><button class="btn btn-ghost" id="togglePastCal" style="padding:6px 10px; display:none;"></button></div>
     <div class="calendar-year" id="calendarYear"></div>
     <div class="rack-legend" id="rackLegend"></div>
   </section>
@@ -48,6 +49,7 @@
     <div class="table-header">
       <h2>Todos os plantões</h2>
       <div class="controls">
+        <button class="btn btn-ghost" id="togglePastTbl" style="padding:6px 10px; display:none;"></button>
         <label class="checkbox-lbl"><input type="checkbox" id="onlyHoliday"> só com feriado</label>
         <select id="personFilter"><option value="">todos</option></select>
         <button class="btn btn-ghost" id="exportScheduleBtn" style="padding:6px 10px;">📥 exportar planilha</button>

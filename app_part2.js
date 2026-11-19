@@ -70,6 +70,31 @@ function fmtDateFull(iso){
 }
 
 let activePerson = null;
+
+// ---- Ocultar plantões/meses anteriores ao mês atual ----
+// Por padrão, o que ficou para trás (meses anteriores ao mês corrente) fica
+// escondido para não poluir a página; o botão "mostrar anteriores" revela.
+let showPast = false;
+function pastCutoffIso(){
+  const t = getToday();
+  return isoLocal(t.getFullYear(), t.getMonth(), 1);
+}
+// Primeiro mês (0-11) visível no calendário do ano exibido. Só oculta se sobrar
+// ao menos um mês visível; em ano inteiramente passado mostra tudo.
+function firstVisibleMonth(){
+  const y = parseInt(currentYear, 10), t = getToday();
+  if(y > t.getFullYear()) return 0;
+  if(y < t.getFullYear()) return 0;
+  return t.getMonth();
+}
+function syncPastButton(id, hiddenCount, noun){
+  const btn = document.getElementById(id);
+  if(!btn) return;
+  if(hiddenCount <= 0){ btn.style.display = 'none'; return; }
+  btn.style.display = '';
+  btn.textContent = showPast ? '🙈 ocultar anteriores' : `👁 mostrar anteriores (${hiddenCount} ${noun})`;
+  btn.onclick = () => { showPast = !showPast; renderAll(); };
+}
 let onlyHoliday = false;
 let tableFilterPerson = '';
 
@@ -289,7 +314,12 @@ function renderCalendarYear(){
   container.innerHTML = '';
   const year = parseInt(currentYear, 10);
 
+  const fvm = firstVisibleMonth();
+  const hiddenMonths = (!showPast && fvm > 0) ? fvm : 0;
+  syncPastButton('togglePastCal', fvm > 0 ? fvm : 0, fvm === 1 ? 'mês' : 'meses');
+
   for(let m=0; m<12; m++){
+    if(hiddenMonths && m < hiddenMonths) continue;
     const card = document.createElement('div');
     card.className = 'month-card';
 
@@ -450,7 +480,16 @@ function renderTable(){
   const tbody = document.getElementById('tbody');
   tbody.innerHTML = '';
   const nextKey = getNextShiftKey();
-  let rows = getEffectiveData();
+  const allRows = getEffectiveData();
+  const cutoff = pastCutoffIso();
+  const isOld = (r) => coverageRange(r).end < cutoff;
+  const oldCount = allRows.filter(isOld).length;
+  // Se tudo já é passado (ex.: ano encerrado), não esconde nada.
+  const hideOld = !showPast && oldCount > 0 && oldCount < allRows.length;
+  syncPastButton('togglePastTbl', oldCount < allRows.length ? oldCount : 0, oldCount === 1 ? 'plantão' : 'plantões');
+  // Mantém a numeração do ano inteiro (#) mesmo escondendo os anteriores.
+  allRows.forEach((r, idx) => { r._n = idx + 1; });
+  let rows = hideOld ? allRows.filter(r => !isOld(r)) : allRows;
   if(onlyHoliday) rows = rows.filter(r => r.tem_feriado);
   if(tableFilterPerson) rows = rows.filter(r => r.titular === tableFilterPerson || r.backup === tableFilterPerson);
 
@@ -468,7 +507,7 @@ function renderTable(){
     const startCell = fmtDateFull(range.start) + (range.extendedFront ? extIcon : '');
     const endCell = fmtDateFull(range.end) + (range.extendedBack ? extIcon : '');
     tr.innerHTML = `
-      <td class="muted">${rec.sabado === nextKey ? '▶' : i+1}</td>
+      <td class="muted">${rec.sabado === nextKey ? '▶' : rec._n}</td>
       <td>${startCell}</td>
       <td>${endCell}</td>
       <td><span class="tag-person"><span class="sw" style="background:${color}"></span>${rec.titular}</span>${ovBadge}</td>
